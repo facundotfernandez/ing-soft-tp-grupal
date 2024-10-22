@@ -13,7 +13,7 @@ export const fetchFromApi = async (key, id) => {
         setTimeout(() => resolve(mockData[key] || []), 1000); // Simular retardo de red
     });
 
-    // Probar cuando esté la API
+    // Probar cuando esté la API armada
     // try {
     //     const url = `${getApiUrl()}/${key}${id ? `/${id}` : ''}`;
     //     const response = await axios.get(url, {headers: getAuthHeaders()});

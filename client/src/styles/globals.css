@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    color-scheme: dark light;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --scrollbar-w: .75rem;
+    --navbar-w: 58px;
+
+    background-color: rgb(31 41 55);
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: var(--foreground);
+    background: var(--background);
+}
+
+body {
+    min-width: 100vw;
+    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
+}

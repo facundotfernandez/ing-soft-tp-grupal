@@ -25,7 +25,11 @@
     margin: 0;
     box-sizing: border-box;
     color: var(--foreground);
-    background: var(--background);
+}
+
+svg {
+    background-color: transparent;
+    fill: cornflowerblue;
 }
 
 body {
@@ -37,7 +41,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: #0a0a0a;
+        --background: rgb(31 41 55);
         --foreground: #ededed;
     }
 }

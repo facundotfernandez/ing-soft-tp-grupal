@@ -9,7 +9,6 @@ const Orders = (clientId) => {
         const getOrders = async () => {
             try {
                 const orders = await fetchOrders(clientId);
-                console.log(orders);
             } catch (error) {
                 console.error('Error fetching orders:', error);
                 logout();

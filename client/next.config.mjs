@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    swcMinify: true,
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'avatar.iran.liara.run',
+                port: '',
+                pathname: '/**',
+            },
+        ],
+    },
 };
 
 export default nextConfig;

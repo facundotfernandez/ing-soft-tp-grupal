@@ -1,13 +1,19 @@
 import '@styles/globals.css';
 import Layout from '@components/structures/Layout';
+import {UserProvider} from "@context/UserProvider";
+import {AuthProvider} from "@context/AuthProvider";
 
-function MyApp({
-                   Component,
-                   pageProps
-               }) {
-    return (<Layout>
-            <Component {...pageProps} />
-        </Layout>);
+function App({
+                 Component,
+                 pageProps
+             }) {
+    return (<AuthProvider>
+        <UserProvider>
+            <Layout>
+                <Component {...pageProps} />
+            </Layout>
+        </UserProvider>
+    </AuthProvider>);
 }
 
-export default MyApp;
+export default App;

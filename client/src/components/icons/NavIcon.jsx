@@ -6,7 +6,8 @@ export const NavIcon = ({type, iconId, className, ...props}) => {
     const TYPES = {
         "social": "fab fa",
         "view": "fas fa",
-        "icon": "fa"
+        "icon": "fa",
+        "custom": ""
     }
 
     return (

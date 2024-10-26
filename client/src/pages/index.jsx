@@ -1,10 +1,8 @@
-import React from 'react';
-import Orders from '@components/Lists/Orders';
+import Orders from '@components/lists/Orders';
 
 const Home = () => {
     return (
         <div>
-            <Orders />
         </div>
     );
 };

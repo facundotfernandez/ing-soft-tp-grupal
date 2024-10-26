@@ -4,6 +4,7 @@ class MyDocument extends Document {
     render() {
         return (<Html lang="en">
             <Head>
+                <link rel="icon" type="image/x-icon" href="/main-icon.png"/>
                 <link href={"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"}
                       rel="stylesheet"/>
             </Head>

@@ -16,11 +16,11 @@ const UserProfileIcon = () => {
 
     const handleLogout = () => {
         setShowLogout(false);
-        setUser({});
+        setUser(null);
         handleNavigation(router, 'login');
     };
 
-    if (!user || !user.hasOwnProperty('accessToken')) {
+    if (!user || user.role === 'guest') {
         return (<div className={"flex gap-x-2"}>
             <NavLinkCard
             className="text-xs"
@@ -50,7 +50,7 @@ const UserProfileIcon = () => {
                 alt={`Perfil de ${user.username}`}
                 className={"rounded-full w-6 h-6 border border-matisse-900"}
             />
-            <h2 className={" text-xs p-0"}>Hola, {user.username}!</h2>
+            <h2 className={" text-xs p-0"}>Hola {user.name}!</h2>
         </NavLinkCard>
         {showLogout && (<div className="absolute mt-20 right-4 bg-white shadow-lg rounded">
             <NavLinkCard

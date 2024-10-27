@@ -10,6 +10,6 @@ export const ToastNotification = ({ message, isVisible }) => (
                 {message}
             </Toast.Description>
         </Toast.Root>
-        <Toast.Viewport className="fixed top-3 right-3 z-[9999]" />
+        <Toast.Viewport className="relative bottom-0 z-[9999]" />
     </Toast.Provider>
 );

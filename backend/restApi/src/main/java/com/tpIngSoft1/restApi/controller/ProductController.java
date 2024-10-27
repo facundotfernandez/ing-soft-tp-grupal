@@ -1,5 +1,6 @@
 package com.tpIngSoft1.restApi.controller;
 
+
 import com.tpIngSoft1.restApi.domain.Product;
 import com.tpIngSoft1.restApi.repository.ProductRepository;
 import org.springframework.validation.annotation.Validated;
@@ -17,8 +18,8 @@ class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody Product product) {
+    @PostMapping
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         productRepository.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

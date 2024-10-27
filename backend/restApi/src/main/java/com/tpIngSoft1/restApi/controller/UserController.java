@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Validated
 @RequiredArgsConstructor
 public class UserController {

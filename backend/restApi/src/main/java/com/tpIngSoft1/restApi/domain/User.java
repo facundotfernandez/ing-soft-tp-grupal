@@ -9,10 +9,9 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class User {
     private String name;
-    private String description;
-    private Float price;
-    private String id;
-    
+    private String email;
+    //private String id;
+    //private String token;
 }

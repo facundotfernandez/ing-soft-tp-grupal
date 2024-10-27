@@ -1,7 +1,7 @@
 package com.tpIngSoft1.restApi.controller;
 
-import com.tpIngSoft1.restApi.domain.Product;
-import com.tpIngSoft1.restApi.repository.ProductRepository;
+import com.tpIngSoft1.restApi.domain.User;
+import com.tpIngSoft1.restApi.repository.UserRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,16 +10,17 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/user")
 @Validated
 @RequiredArgsConstructor
-class ProductController {
-    @Autowired
-    private ProductRepository productRepository;
+public class UserController {
 
-    @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody Product product) {
-        productRepository.save(product);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 }

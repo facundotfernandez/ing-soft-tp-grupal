@@ -1,4 +1,3 @@
-import Orders from '@components/lists/Orders';
 
 const Home = () => {
     return (

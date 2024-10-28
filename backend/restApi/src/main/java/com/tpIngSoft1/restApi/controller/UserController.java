@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping()
 @Validated
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired

@@ -1,43 +1,35 @@
-package com.tpIngSoft1.restApi.domain;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+package com.tpIngSoft1.restApi.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Document(collection = "users")
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 @Data
-@NoArgsConstructor
-public class User {
-    @Id
-    private String id;
+public class UserDTO {
+    @NotBlank(message = "El nombre es obligatorio.")
     private String name;
-    private String email;
-    private String accessToken;
-    private String username;
+
+    @NotBlank(message = "El apellido es obligatorio.")
     private String lastname;
+
+    @NotBlank(message = "El nombre de usuario es obligatorio.")
+    private String username;
+
+    @NotBlank(message = "La contraseña es obligatoria.") // Solo se usa para el registro
     private String password;
+
+    @NotBlank(message = "El correo electrónico es obligatorio.")
+    @Email(message = "El formato del correo electrónico es inválido.")
+    private String email;
+
+    @NotBlank(message = "El token de acceso es obligatorio.")
+    private String accessToken;
+
     private String address;
     private String gender;
     private String profilePic;
     private String role;
-
-    public User() {
-    }
-
-    public User(String name, String email, String id, String accessToken, String username, String lastname, String password, String address, String gender, String profilePic, String role) {
-        this.name = name;
-        this.email = email;
-        this.accessToken = accessToken;
-        this.username = username;
-        this.lastname = lastname;
-        this.password = password;
-        this.address = address;
-        this.gender = gender;
-        this.profilePic = profilePic;
-        this.role = role;
-    }
 
     public String getName() {
         return name;

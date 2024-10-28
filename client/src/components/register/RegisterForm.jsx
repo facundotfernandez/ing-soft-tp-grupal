@@ -1,19 +1,21 @@
 import {Divider, TextInput} from '@tremor/react';
 import {ToastNotification} from "@components/login/ToastNotification";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useRouter} from "next/router";
 import {useToast} from "@hooks/useToast";
 import {handleNavigation} from "@utils/navigation";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
+import {UserContext} from "@context/UserProvider";
 
 export const RegisterForm = () => {
+    const {register} = useContext(UserContext);
     const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         name: '',
-        lastName: '',
+        lastname: '',
         gender: '',
-        imageUrl: '',
+        profilePic: '',
         address: '',
         username: '',
         password: ''
@@ -45,10 +47,10 @@ export const RegisterForm = () => {
             password,
             email,
             name,
-            lastName
+            lastname
         } = formData;
 
-        if (!username || !password || !email || !name || !lastName) {
+        if (!username || !password || !email || !name || !lastname) {
             setToastMessage('Por favor, completa todos los campos obligatorios.');
             setShowToast(true);
             return;
@@ -56,28 +58,11 @@ export const RegisterForm = () => {
 
         try {
             setShowToast(false);
-
-            // TODO: API EN DESARROLLO
-            // const response = await axios.post(REGISTER_URL, formData, {
-            //     headers: { 'Content-Type': 'application/json' },
-            //     withCredentials: true
-            // });
-            // console.log(JSON.stringify(response?.data));
-
+            await register(formData);
             handleNavigation(router, 'login');
 
         } catch (err) {
-            let msg = 'Falló la autenticación';
-            if (err?.response) {
-                if (err.response.status === 400) {
-                    msg = 'Falta información';
-                } else if (err.response.status === 401) {
-                    msg = 'Sin autorización';
-                } else {
-                    msg = 'Servidor sin respuesta';
-                }
-            }
-
+            let msg = err.response.data;
             setToastMessage(msg);
             setShowToast(true);
         }
@@ -110,7 +95,7 @@ export const RegisterForm = () => {
                 </div>
                 <div className="col-span-full sm:col-span-3">
                     <label
-                        htmlFor="lastName"
+                        htmlFor="lastname"
                         className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
                     >
                         Apellido
@@ -118,13 +103,13 @@ export const RegisterForm = () => {
                     </label>
                     <TextInput
                         type="text"
-                        id="lastName"
-                        name="lastName"
+                        id="lastname"
+                        name="lastname"
                         autoComplete="family-name"
                         placeholder=""
                         className="mt-2"
 
-                        value={formData.lastName}
+                        value={formData.lastname}
                         onChange={handleChange}
                     />
                 </div>
@@ -223,18 +208,18 @@ export const RegisterForm = () => {
                 </div>
                 <div className="col-span-full">
                     <label
-                        htmlFor="imageUrl"
+                        htmlFor="profilePic"
                         className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
                     >
                         Foto de Perfil
                     </label>
                     <TextInput
                         type="text"
-                        id="imageUrl"
-                        name="imageUrl"
+                        id="profilePic"
+                        name="profilePic"
                         placeholder=""
                         className="mt-2"
-                        value={formData.imageUrl}
+                        value={formData.profilePic}
                         onChange={handleChange}
                     />
                 </div>

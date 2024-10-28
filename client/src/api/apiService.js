@@ -2,18 +2,13 @@ import axios from "axios";
 import {getAuthHeaders} from '@api/authService';
 
 export const getApiUrl = () => {
-    return process.env.NODE_ENV === "development" ? process.env.LOCAL_API_URL : process.env.API_URL;
+    return process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_LOCAL_API_URL : process.env.NEXT_PUBLIC_API_URL;
 };
 
 export const create = async (key, data) => {
-    try {
-        const apiUrl = `${getApiUrl()}/${key}`;
-        const response = await axios.post(apiUrl, data, {headers: await getAuthHeaders()});
-        return response.data;
-    } catch (error) {
-        console.error(`Error creando ${key}:`, error);
-        throw error;
-    }
+    const apiUrl = `${getApiUrl()}/${key}`;
+    const response = await axios.post(apiUrl, data, {headers: await getAuthHeaders()});
+    return response.data;
 };
 
 export const read = async (key, id) => {

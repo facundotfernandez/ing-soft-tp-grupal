@@ -44,7 +44,7 @@ const UserProfileIcon = () => {
         >
             <Image
                 priority={false}
-                src={user.imageUrl}
+                src={user.profilePic}
                 width={24}
                 height={24}
                 alt={`Perfil de ${user.username}`}

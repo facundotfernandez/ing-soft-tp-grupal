@@ -5,7 +5,7 @@ export const data = [{
     subCategory: 'Botines',
     brand: 'Adidas',
     title: 'F50 Elite',
-    imageUrl: '',
+    profilePic: '',
     price: 100,
     stock: [{
         size: '40',
@@ -22,7 +22,7 @@ export const data = [{
     subCategory: 'Zapatillas',
     brand: 'Adidas',
     title: 'Galaxy Star',
-    imageUrl: '',
+    profilePic: '',
     stock: [{
         size: '39',
         color: 'Negro',
@@ -38,7 +38,7 @@ export const data = [{
     subCategory: 'Remera',
     brand: 'Puma',
     title: 'Remera',
-    imageUrl: '',
+    profilePic: '',
     stock: [{
         size: 'M',
         color: 'Rojo',
@@ -56,7 +56,7 @@ export const data = [{
     subCategory: 'Botines',
     brand: 'Puma',
     title: 'Borussia',
-    imageUrl: '',
+    profilePic: '',
     stock: [{
         size: '42',
         color: 'Negro',

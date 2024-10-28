@@ -36,12 +36,7 @@ export const LoginForm = () => {
             await login(username, password);
             handleNavigation(router, '');
         } catch (err) {
-            let msg;
-            if (err?.response) {
-                msg = err.response.status === 400 ? 'Falta información' : err.response.status === 401 ? 'Sin autorización' : 'Servidor sin respuesta';
-            } else {
-                msg = err.message;
-            }
+            let msg = "El Usuario no existe";
             setToastMessage(msg);
             setShowToast(true);
         }

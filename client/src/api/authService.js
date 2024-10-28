@@ -2,14 +2,12 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import {getApiUrl} from '@api/apiService';
 
-const {v4: uuidv4} = require('uuid');
-
 export const getAccessToken = () => {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem('accessToken');
 };
 
 export const saveAccessToken = (token) => {
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem('accessToken', token);
 };
 
 export const isTokenExpired = (token) => {
@@ -41,11 +39,13 @@ export const refreshAccessToken = async () => {
 
 export const getAuthHeaders = async () => {
     let token = getAccessToken();
+    return;
 
     if (!token || isTokenExpired(token)) {
         console.log('Token expirado o no encontrado. Refrescando token de acceso');
         try {
-            token = await refreshAccessToken();
+            token = process.env.TOKEN_GUEST;
+            // token = await refreshAccessToken();
         } catch (error) {
             console.error('Error al refrescar el token:', error);
             throw new Error('No se pudo refrescar el token de acceso');
@@ -58,18 +58,3 @@ export const getAuthHeaders = async () => {
         withCredentials: true
     };
 };
-
-export const createAccessToken = async (username, password) => {
-    const secretKey = process.env.TOKEN_SECRET;
-    const userId = uuidv4();
-    const payload = {
-        userId: userId,
-        username: username,
-        password: password
-    };
-    const options = {
-        expiresIn: '30d',
-        algorithm: 'HS256'
-    };
-    return jwt.sign(payload, secretKey, options);
-}

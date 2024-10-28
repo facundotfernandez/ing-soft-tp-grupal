@@ -1,5 +1,5 @@
 import {createContext, useEffect, useState} from 'react';
-import {createLogin} from "@api/createRequests";
+import {createLogin, createRegister} from "@api/createRequests";
 
 export const UserContext = createContext();
 
@@ -14,10 +14,10 @@ export const UserProvider = ({children}) => {
 
     useEffect(() => {
         if (user) {
-            localStorage.setItem('access_token', user.accessToken);
+            localStorage.setItem('accessToken', user.accessToken);
             sessionStorage.setItem('user_data', JSON.stringify(user));
         } else {
-            localStorage.removeItem('access_token');
+            localStorage.removeItem('accessToken');
             sessionStorage.removeItem('user_data');
         }
     }, [user]);
@@ -29,14 +29,19 @@ export const UserProvider = ({children}) => {
         });
         setUser(userData);
 
-        localStorage.setItem('access_token', userData.accessToken);
+        localStorage.setItem('accessToken', userData.accessToken);
         sessionStorage.setItem('user_data', JSON.stringify(userData));
+    };
+
+    const register = async (formData) => {
+        await createRegister(formData);
     };
 
     return (<UserContext.Provider value={{
         user,
         setUser,
         login,
+        register
     }}>
         {children}
     </UserContext.Provider>);

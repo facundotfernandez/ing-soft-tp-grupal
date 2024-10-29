@@ -1,20 +1,20 @@
-// components/login/LoginForm.js
+// components/recovery/LoginForm.js
 import {useContext, useState} from "react";
 import {UserContext} from "@context/UserProvider";
 import {useRouter} from "next/router";
-import {ToastNotification} from "@components/login/ToastNotification";
+import {ToastNotification} from "@components/recovery/ToastNotification";
 import Column from "@components/structures/Column";
 import {handleNavigation} from "@utils/navigation";
 import {useToast} from "@hooks/useToast";
-import LoginInput from "./LoginInput";
-import LoginButton from "./LoginButton";
-import {ActionLinks} from "@components/login/ActionLinks";
+import RecoveryInput from "./RecoveryInput";
+import RecoveryButton from "./RecoveryButton";
+import {ActionLinks} from "@components/recovery/ActionLinks";
 
-export const LoginForm = () => {
-    const {login} = useContext(UserContext);
+export const RecoveryForm = () => {
+    const {recovery} = useContext(UserContext);
     const router = useRouter();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    //const [password, setPassword] = useState('');
     const {
         toastMessage,
         showToast,
@@ -25,7 +25,7 @@ export const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!username || !password) {
+        if (!email ) {
             setToastMessage('Por favor, completa todos los campos.');
             setShowToast(true);
             return;
@@ -33,7 +33,7 @@ export const LoginForm = () => {
 
         try {
             setShowToast(false);
-            await login(username, password);
+            await recovery(email);
             handleNavigation(router, '');
         } catch (err) {
             let msg = "El Usuario no existe";
@@ -45,29 +45,18 @@ export const LoginForm = () => {
     return (<>
         <form onSubmit={handleSubmit}
               className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
-            <LoginInput
-                id="username"
+            <RecoveryInput
+                id="email"
                 type="text"
-                placeholder="Ingresa tu usuario"
-                value={username}
+                placeholder="Ingresa tu email"
+                value={email}
                 onChange={(e) => {
                     setShowToast(false);
-                    setUsername(e.target.value);
-                }}
-            />
-            <LoginInput
-                id="password"
-                type="password"
-                placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => {
-                    setShowToast(false);
-                    setPassword(e.target.value);
+                    setEmail(e.target.value);
                 }}
             />
             <Column className="flex w-full place-items-center ">
-                <LoginButton onSubmit={handleSubmit}/>
-                <ActionLinks onRegisterClick={() => handleNavigation(router, 'register')} onForgetPassword={() => handleNavigation(router, 'recovery')}/>
+                <RecoveryButton onSubmit={handleSubmit}/>
             </Column>
         </form>
         <ToastNotification message={toastMessage} isVisible={showToast}/>

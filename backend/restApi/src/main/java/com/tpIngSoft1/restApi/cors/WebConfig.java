@@ -8,9 +8,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Permite todas las rutas
-                .allowedOrigins("http://localhost:3000") // Agrega tu origen aquí
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
-                .allowedHeaders("*") // Permitir todos los encabezados
-                .allowCredentials(true); // Permitir credenciales si es necesario
+                .allowedOrigins("http://localhost:3000", "https://ing-soft-tp-grupal.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

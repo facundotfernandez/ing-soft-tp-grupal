@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping()
 @Validated
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", "https://ing-soft-tp-grupal.vercel.app")
 public class UserController {
 
     @Autowired

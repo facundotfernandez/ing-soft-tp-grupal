@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @Document(collection = "users")
 @Data
-@NoArgsConstructor
 public class User {
     @Id
     private String id;

@@ -23,7 +23,7 @@ COPY --from=build /home/app/restApi/target/restApi-0.0.1-SNAPSHOT.jar /home/app/
 COPY /restApi/src/main/resources /home/app/back/src/main/resources
 
 # Expose the port that your Spring Boot application is using (adjust if needed)
-EXPOSE 8080
+EXPOSE 9000
 
 # Set the entrypoint to run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "/home/app/app.jar"]

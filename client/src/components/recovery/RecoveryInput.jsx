@@ -1,4 +1,5 @@
 import {InputField} from "@components/recovery/InputField";
+import LoginInput from "@components/login/LoginInput";
 
 const RecoveryInput = ({
                         id,
@@ -7,7 +8,7 @@ const RecoveryInput = ({
                         value,
                         onChange
                     }) => {
-    return (<InputField
+    return (<LoginInput
             id={id}
             type={type}
             placeholder={placeholder}

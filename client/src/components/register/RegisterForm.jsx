@@ -1,15 +1,14 @@
 import {Divider, TextInput} from '@tremor/react';
-import {ToastNotification} from "@components/login/ToastNotification";
+import {ToastNotification} from "@components/notifications/ToastNotification";
 import {useContext, useState} from "react";
-import {useRouter} from "next/router";
 import {useToast} from "@hooks/useToast";
-import {handleNavigation} from "@utils/navigation";
+import {useNavigation} from "@hooks/useNavigation";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import {UserContext} from "@context/UserProvider";
 
 export const RegisterForm = () => {
     const {register} = useContext(UserContext);
-    const router = useRouter();
+    const handleNavigation = useNavigation();
     const [formData, setFormData] = useState({
         email: '',
         name: '',
@@ -59,7 +58,7 @@ export const RegisterForm = () => {
         try {
             setShowToast(false);
             await register(formData);
-            handleNavigation(router, 'login');
+            handleNavigation('login');
 
         } catch (err) {
             let msg = err.response.data;

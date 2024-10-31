@@ -1,16 +1,15 @@
 import {useContext, useState} from "react";
 import {UserContext} from "@context/UserProvider";
-import {useRouter} from "next/router";
-import {ToastNotification} from "@components/recovery/ToastNotification";
+import {ToastNotification} from "@components/notifications/ToastNotification";
 import Column from "@components/structures/Column";
 import {useToast} from "@hooks/useToast";
-import RecoveryInput from "./RecoveryInput";
 import RecoveryButton from "./RecoveryButton";
-import {handleNavigation} from "@utils/navigation";
+import {useNavigation} from "@hooks/useNavigation";
+import AuthInput from "@components/inputs/AuthInput";
 
 export const RecoveryForm = () => {
+    const handleNavigation = useNavigation();
     const {recovery} = useContext(UserContext);
-    const router = useRouter();
     const [email, setEmail] = useState('');
 
     const {
@@ -20,30 +19,33 @@ export const RecoveryForm = () => {
         setShowToast
     } = useToast();
 
+    const showToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!email) {
-            setToastMessage('Por favor, ingresa un mail válido.');
-            setShowToast(true);
+            showToastMessage('Por favor, ingresa un mail válido.');
             return;
         }
 
         try {
             setShowToast(false);
             await recovery(email);
-            handleNavigation(router, '');
+            handleNavigation('');
         } catch (err) {
             let msg = "El email no pertenece a un usuario";
-            setToastMessage(msg);
-            setShowToast(true);
+            showToastMessage(msg);
         }
     };
 
     return (<>
         <form onSubmit={handleSubmit}
               className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
-            <RecoveryInput
+            <AuthInput
                 id="email"
                 type="email"
                 placeholder="Ingresa tu email"

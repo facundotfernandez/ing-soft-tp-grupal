@@ -2,7 +2,7 @@ import axios from "axios";
 import {getAuthHeaders} from '@api/authService';
 
 export const getApiUrl = () => {
-    return process.env.NODE_ENV === "devLocal" ? process.env.NEXT_PUBLIC_LOCAL_API_URL : process.env.NEXT_PUBLIC_API_URL;
+    return process.env.NEXT_PUBLIC_LOCAL_API_URL;
 };
 
 export const create = async (key, data) => {

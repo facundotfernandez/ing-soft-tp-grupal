@@ -1,18 +1,21 @@
-// components/login/LoginForm.js
 import {useContext, useState} from "react";
 import {UserContext} from "@context/UserProvider";
-import {useRouter} from "next/router";
-import {ToastNotification} from "@components/login/ToastNotification";
+import {ToastNotification} from "@components/notifications/ToastNotification";
 import Column from "@components/structures/Column";
-import {handleNavigation} from "@utils/navigation";
 import {useToast} from "@hooks/useToast";
-import LoginInput from "./LoginInput";
 import LoginButton from "./LoginButton";
 import {ActionLinks} from "@components/login/ActionLinks";
+import AuthInput from "@components/inputs/AuthInput";
+import PropTypes from "prop-types";
+import {areFieldsFilled} from "@utils/validations";
+import {useNavigation} from "@hooks/useNavigation";
 
 export const LoginForm = () => {
-    const {login} = useContext(UserContext);
-    const router = useRouter();
+    const {
+        user,
+        login
+    } = useContext(UserContext);
+    const handleNavigation = useNavigation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const {
@@ -22,54 +25,73 @@ export const LoginForm = () => {
         setShowToast
     } = useToast();
 
+    const showToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+    };
+
+    const handleInputChange = (setter) => (e) => {
+        setter(e.target.value);
+        setShowToast(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!username || !password) {
-            setToastMessage('Por favor, completa todos los campos.');
-            setShowToast(true);
+        if (user && user.username !== "guest") {
+            showToastMessage('Ya iniciaste sesión');
+            return;
+        }
+
+        if (!areFieldsFilled([username, password])) {
+            showToastMessage('Por favor, completa todos los campos.');
             return;
         }
 
         try {
             setShowToast(false);
             await login(username, password);
-            handleNavigation(router, '');
+            handleNavigation('');
         } catch (err) {
-            let msg = "El Usuario no existe";
-            setToastMessage(msg);
-            setShowToast(true);
+            showToastMessage("El Usuario no existe");
         }
     };
 
     return (<>
-        <form onSubmit={handleSubmit}
-              className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
-            <LoginInput
+        <form
+            onSubmit={handleSubmit}
+            className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4"
+        >
+            <AuthInput
                 id="username"
                 type="text"
                 placeholder="Ingresa tu usuario"
                 value={username}
-                onChange={(e) => {
-                    setShowToast(false);
-                    setUsername(e.target.value);
-                }}
+                onChange={handleInputChange(setUsername)}
             />
-            <LoginInput
+            <AuthInput
                 id="password"
                 type="password"
                 placeholder="Ingresa tu contraseña"
                 value={password}
-                onChange={(e) => {
-                    setShowToast(false);
-                    setPassword(e.target.value);
-                }}
+                onChange={handleInputChange(setPassword)}
             />
-            <Column className="flex w-full place-items-center ">
+            <Column className="place-items-center">
                 <LoginButton onSubmit={handleSubmit}/>
-                <ActionLinks onRegisterClick={() => handleNavigation(router, 'register')}/>
+                <ActionLinks
+                    onRegisterClick={() => handleNavigation('register')}
+                    onForgetPassword={() => handleNavigation('recovery')}
+                />
             </Column>
         </form>
         <ToastNotification message={toastMessage} isVisible={showToast}/>
     </>);
+};
+
+
+UserContext.propTypes = {
+    user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        password: PropTypes.string.isRequired,
+    }),
 };

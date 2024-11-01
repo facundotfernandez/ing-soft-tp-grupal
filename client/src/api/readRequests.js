@@ -5,7 +5,7 @@ export const getOrders = async (accessToken) => {
 };
 
 export const getUser = async (accessToken) => {
-    // return await read('users', accessToken); TODO: API REQUEST PARA USER PENDIENTE
+    return await read('users', accessToken);
 };
 
 export const getProducts = async () => {

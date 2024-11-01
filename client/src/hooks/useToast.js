@@ -10,7 +10,7 @@ export const useToast = (initialMessage = '') => {
 
     useEffect(() => {
         if (showToast) {
-            const timer = setTimeout(() => setShowToast(false), 5000);
+            const timer = setTimeout(() => setShowToast(false), 3000);
             return () => clearTimeout(timer);
         }
     }, [showToast]);

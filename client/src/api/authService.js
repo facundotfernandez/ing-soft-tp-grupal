@@ -3,11 +3,11 @@ import axios from 'axios';
 import {getApiUrl} from '@api/apiService';
 
 export const getAccessToken = () => {
-    return localStorage.getItem('accessToken');
+    return localStorage.getItem('access_token');
 };
 
 export const saveAccessToken = (token) => {
-    localStorage.setItem('accessToken', token);
+    localStorage.setItem('access_token', token);
 };
 
 export const isTokenExpired = (token) => {

@@ -35,6 +35,7 @@ class ProductController {
         List<Product> products = productService.getAllProducts();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
+
     //FALTA AGREGAR COMENTARIOS EJ:SI NO SE ENCUENTRA
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable String id){

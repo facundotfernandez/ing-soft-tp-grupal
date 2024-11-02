@@ -16,15 +16,12 @@ public class ProductService {
         return repository.findAll();
     }
 
-    public Optional<Product> findByName(String name) { return repository.findByName(name); }
+    public Optional<Product> findByName(String name) {
+        return repository.findByName(name);
+    }
 
-    public Optional<Product> findByBrand(String brand) { return repository.findByBrand(brand); }
-
-    public Optional<Product> findById(String id) { return repository.findById(id); }
-
-    public Optional<Product> findByNameAndBrand(String name, String brand) {
-        Optional<Product> product = repository.findByName(name);
-        return product.filter(u -> u.getBrand().equals(brand));
+    public Optional<Product> findById(String id) {
+        return repository.findById(id);
     }
 
     public void saveProduct(Product product){

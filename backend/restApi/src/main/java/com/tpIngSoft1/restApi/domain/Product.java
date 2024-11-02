@@ -2,9 +2,11 @@ package com.tpIngSoft1.restApi.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.tpIngSoft1.restApi.domain.Variant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.List;
 
 @Document(collection = "products")
 @Data
@@ -16,33 +18,20 @@ public class Product {
 
         private String name;
 
-        private String description;
+        private List<Variant> variants;
 
-        private Double price;
-
-        private String brand;
+        public Product() {};
 
         public Product(String name, String description, String brand, Double price) {
                 this.name = name;
-                this.description = description;
-                this.brand = brand;
-                this.price = price;
         }
 
         public String getName() { return name; }
 
         public void setName(String name) { this.name = name; }
 
-        public String getDescription() { return description; }
+        public List<Variant> getVariants() { return variants; }
 
-        public void setDescription(String description) { this.description = description; }
-
-        public Double getPrice() { return price; }
-
-        public void setPrice(Double price) { this.price = price; }
-
-        public String getBrand() { return brand; }
-
-        public void setBrand(String brand) { this.brand = brand; }
+        public void setVariants(List<Variant> variants) { this.variants = variants; }
 }
 

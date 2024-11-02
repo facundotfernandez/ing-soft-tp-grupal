@@ -6,14 +6,21 @@ import {NavIcon} from "@components/icons/NavIcon";
 const Header = () => {
     const handleNavigation = useNavigation();
 
-    return (
-        <header className="flex justify-between items-center bg-gray-700 p-4 w-full">
-            <NavLinkCard onClick={() => handleNavigation('')}>
-                <NavIcon type="view" iconId="home" />
-            </NavLinkCard>
-            <UserProfileIcon />
-        </header>
-    );
+    return (<header className="flex justify-between items-center bg-gray-700 p-4 w-full">
+            <div className="flex gap-x-2">
+                <NavLinkCard onClick={() => handleNavigation('')}>
+                    <NavIcon type="view" iconId="home"/>
+                </NavLinkCard>
+                <NavLinkCard onClick={() => handleNavigation('products')}
+                             className={"bg-dark-tremor-background-subtle"}>
+                    <NavIcon type="view" iconId="store"/>
+                </NavLinkCard>
+                <NavLinkCard onClick={() => handleNavigation('cart')} className={"bg-dark-tremor-background-subtle"}>
+                    <NavIcon type="view" iconId="cart-shopping"/>
+                </NavLinkCard>
+            </div>
+            <UserProfileIcon/>
+        </header>);
 };
 
 const Footer = () => (<footer className="bg-gray-700 p-3 w-full">

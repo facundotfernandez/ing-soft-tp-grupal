@@ -10,7 +10,7 @@ function App({
             <Layout>
                 <Component {...pageProps} />
             </Layout>
-        </UserProvider>);
+    </UserProvider>);
 }
 
 export default App;

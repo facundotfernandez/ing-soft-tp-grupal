@@ -1,9 +1,10 @@
 import {useRouter} from 'next/router';
+import {routes} from "@routes/navigation";
 
-export const useNavigation = (url) => {
+export const useNavigation = () => {
     const router = useRouter();
 
-    return (url) => {
+    const handleNavigation = ((url) => {
         const targetPath = `/${url}`;
         const currentPath = router.asPath.split('#')[0];
         if (currentPath !== targetPath) {
@@ -11,5 +12,53 @@ export const useNavigation = (url) => {
         } else {
             window.scrollTo(0, 0);
         }
+    });
+
+    const goToCart = (() => {
+        handleNavigation(routes.cart);
+    });
+
+    const goToHome = (() => {
+        handleNavigation(routes.home);
+    });
+
+    const goToLogin = (() => {
+        handleNavigation(routes.login);
+    });
+
+    const goToRecovery = (() => {
+        handleNavigation(routes.recovery);
+    });
+
+    const goToRegister = (() => {
+        handleNavigation(routes.register);
+    });
+
+    const goToProduct = ((id) => {
+        handleNavigation(routes.product + id);
+    });
+
+    const goToProducts = (() => {
+        handleNavigation(routes.products);
+    });
+
+    const goToOrder = ((id) => {
+        handleNavigation(routes.order + id);
+    });
+
+    const goToOrders = (() => {
+        handleNavigation(routes.orders);
+    });
+
+    return {
+        goToCart,
+        goToHome,
+        goToLogin,
+        goToRecovery,
+        goToRegister,
+        goToProduct,
+        goToProducts,
+        goToOrder,
+        goToOrders,
     };
 };

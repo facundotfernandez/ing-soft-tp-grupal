@@ -2,7 +2,7 @@ import {createContext, useEffect, useState} from 'react';
 import {createLogin, createRegister} from "@api/createRequests";
 import PropTypes from "prop-types";
 
-export const UserContext = createContext();
+export const UserContext = createContext(undefined, undefined);
 
 export const UserProvider = ({children}) => {
     const [user, setUser] = useState(null);
@@ -19,6 +19,7 @@ export const UserProvider = ({children}) => {
         } else {
             localStorage.removeItem('access_token');
             sessionStorage.removeItem('user_data');
+            login(GUEST_ROLE, GUEST_ROLE);
         }
     }, [user]);
 

@@ -8,20 +8,22 @@ export const InputField = ({
                                autoComplete,
                                label,
                                value,
-                               onChange
+                               onChange,
+                               required = false
                            }) => (<Column className={"gap-y-1"}>
     <label
         htmlFor={id}
-        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
+        className="text-tremor-default font-medium text-dark-tremor-content-strong"
     >
         {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
     </label>
     <TextInput
         type={type}
         id={id}
         name={id}
         autoComplete={autoComplete}
-        placeholder={placeholder}
+        placeholder={placeholder || ""}
         onChange={onChange}
         value={value}
     />

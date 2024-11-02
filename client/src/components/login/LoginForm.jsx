@@ -5,7 +5,7 @@ import Column from "@components/structures/Column";
 import {useToast} from "@hooks/useToast";
 import LoginButton from "./LoginButton";
 import {ActionLinks} from "@components/login/ActionLinks";
-import AuthInput from "@components/inputs/AuthInput";
+import {InputField} from "@components/inputs/InputField";
 import PropTypes from "prop-types";
 import {areFieldsFilled} from "@utils/validations";
 import {useNavigation} from "@hooks/useNavigation";
@@ -15,7 +15,7 @@ export const LoginForm = () => {
         user,
         login
     } = useContext(UserContext);
-    const handleNavigation = useNavigation();
+    const {goToHome, goToRegister, goToRecovery} = useNavigation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const {
@@ -51,7 +51,7 @@ export const LoginForm = () => {
         try {
             setShowToast(false);
             await login(username, password);
-            handleNavigation('');
+            goToHome();
         } catch (err) {
             showToastMessage("El Usuario no existe");
         }
@@ -62,14 +62,14 @@ export const LoginForm = () => {
             onSubmit={handleSubmit}
             className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4"
         >
-            <AuthInput
+            <InputField
                 id="username"
                 type="text"
                 placeholder="Ingresa tu usuario"
                 value={username}
                 onChange={handleInputChange(setUsername)}
             />
-            <AuthInput
+            <InputField
                 id="password"
                 type="password"
                 placeholder="Ingresa tu contraseña"
@@ -79,8 +79,8 @@ export const LoginForm = () => {
             <Column className="place-items-center">
                 <LoginButton onSubmit={handleSubmit}/>
                 <ActionLinks
-                    onRegisterClick={() => handleNavigation('register')}
-                    onForgetPassword={() => handleNavigation('recovery')}
+                    onRegisterClick={() => goToRegister()}
+                    onForgetPassword={() => goToRecovery()}
                 />
             </Column>
         </form>

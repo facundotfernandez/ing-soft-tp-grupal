@@ -1,12 +1,14 @@
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useState} from 'react';
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
-import {useRouter} from "next/router";
 import {useNavigation} from "@hooks/useNavigation"
 import Image from 'next/image'
 import {UserContext} from "@context/UserProvider";
 
 const UserProfileIcon = () => {
-    const handleNavigation = useNavigation();
+    const {
+        goToLogin,
+        goToRegister
+    } = useNavigation();
     const [showLogout, setShowLogout] = useState(false);
 
     const {
@@ -17,20 +19,20 @@ const UserProfileIcon = () => {
     const handleLogout = () => {
         setShowLogout(false);
         setUser(null);
-        handleNavigation( 'login');
+        goToLogin();
     };
 
     if (!user || user.role === 'guest') {
         return (<div className={"flex gap-x-2"}>
             <NavLinkCard
-            className="text-xs"
-            onClick={() => handleNavigation( 'login')}
-        >
-            Iniciar sesión
-        </NavLinkCard>
+                className="text-xs text-center"
+                onClick={() => goToLogin()}
+            >
+                Iniciar sesión
+            </NavLinkCard>
             <NavLinkCard
-                className="text-xs bg-dark-tremor-background"
-                onClick={() => handleNavigation( 'register')}
+                className="text-xs bg-dark-tremor-background text-center"
+                onClick={() => goToRegister()}
             >
                 Registrarse
             </NavLinkCard>

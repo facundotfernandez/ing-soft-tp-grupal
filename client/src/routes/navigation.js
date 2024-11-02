@@ -1,8 +1,11 @@
-/*Se usaría NextJs para gestionar las rutas automáticamente
-pero podría llegar a ser útil este archivo para modularizar*/
-
 export const routes = {
-    home: '/',
-    orders: '/orders',
-    products: '/products',
+    cart: 'cart',
+    home: '',
+    login: 'login',
+    order: 'orders/',
+    orders: 'orders',
+    product: 'products/',
+    products: 'products',
+    recovery: 'recovery',
+    register: 'register'
 };

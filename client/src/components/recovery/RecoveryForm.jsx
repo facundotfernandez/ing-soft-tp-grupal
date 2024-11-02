@@ -5,10 +5,10 @@ import Column from "@components/structures/Column";
 import {useToast} from "@hooks/useToast";
 import RecoveryButton from "./RecoveryButton";
 import {useNavigation} from "@hooks/useNavigation";
-import AuthInput from "@components/inputs/AuthInput";
+import {InputField} from "@components/inputs/InputField";
 
 export const RecoveryForm = () => {
-    const handleNavigation = useNavigation();
+    const {goToHome} = useNavigation();
     const {recovery} = useContext(UserContext);
     const [email, setEmail] = useState('');
 
@@ -35,7 +35,7 @@ export const RecoveryForm = () => {
         try {
             setShowToast(false);
             await recovery(email);
-            handleNavigation('');
+            goToHome();
         } catch (err) {
             let msg = "El email no pertenece a un usuario";
             showToastMessage(msg);
@@ -45,7 +45,7 @@ export const RecoveryForm = () => {
     return (<>
         <form onSubmit={handleSubmit}
               className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
-            <AuthInput
+            <InputField
                 id="email"
                 type="email"
                 placeholder="Ingresa tu email"

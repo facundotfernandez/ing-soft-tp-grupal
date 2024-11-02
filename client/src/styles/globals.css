@@ -5,8 +5,6 @@
 :root {
     font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
 
-    color-scheme: dark light;
-
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -53,11 +51,4 @@ body {
     border: calc(1rem / 3) solid var(--background);
     border-radius: 1rem;
     background: linear-gradient(45deg, #00aeff, #a68eff);
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: rgb(31 41 55);
-        --foreground: #ededed;
-    }
 }

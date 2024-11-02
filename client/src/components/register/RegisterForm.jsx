@@ -1,14 +1,15 @@
-import {Divider, TextInput} from '@tremor/react';
+import {Divider} from '@tremor/react';
 import {ToastNotification} from "@components/notifications/ToastNotification";
 import {useContext, useState} from "react";
 import {useToast} from "@hooks/useToast";
 import {useNavigation} from "@hooks/useNavigation";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import {UserContext} from "@context/UserProvider";
+import {InputField} from "@components/inputs/InputField";
 
 export const RegisterForm = () => {
     const {register} = useContext(UserContext);
-    const handleNavigation = useNavigation();
+    const {goToLogin} = useNavigation();
     const [formData, setFormData] = useState({
         email: '',
         name: '',
@@ -58,10 +59,9 @@ export const RegisterForm = () => {
         try {
             setShowToast(false);
             await register(formData);
-            handleNavigation('login');
-
+            goToLogin();
         } catch (err) {
-            let msg = err.response.data;
+            let msg = err.response?.data;
             setToastMessage(msg);
             setShowToast(true);
         }
@@ -73,161 +73,49 @@ export const RegisterForm = () => {
               className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
             <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-6">
                 <div className="col-span-full sm:col-span-3">
-                    <label
-                        htmlFor="name"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Nombre
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="name"
-                        name="name"
-                        autoComplete="given-name"
-                        placeholder=""
-                        className="mt-2"
-
-                        value={formData.name}
-                        onChange={handleChange}
-                    />
+                    <InputField id="name" type="text" label="Nombre" value={formData.name}
+                                onChange={handleChange} required/>
                 </div>
                 <div className="col-span-full sm:col-span-3">
-                    <label
-                        htmlFor="lastname"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Apellido
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="lastname"
-                        name="lastname"
-                        autoComplete="family-name"
-                        placeholder=""
-                        className="mt-2"
-
-                        value={formData.lastname}
-                        onChange={handleChange}
-                    />
+                    <InputField id="lastname" type="text" label="Apellido"
+                                value={formData.lastname} onChange={handleChange} required/>
                 </div>
                 <div className="col-span-full sm:col-span-3">
-                    <label
-                        htmlFor="username"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Nombre de Usuario
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder=""
-                        className="mt-2"
-
-                        value={formData.username}
-                        onChange={handleChange}
-                    />
+                    <InputField id="username" type="text" label="Nombre de Usuario"
+                                value={formData.username} onChange={handleChange} required/>
                 </div>
                 <div className="col-span-full sm:col-span-3">
-                    <label
-                        htmlFor="password"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Contraseña
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder=""
-                        className="mt-2"
-
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
+                    <InputField id="password" type="password" label="Contraseña"
+                                value={formData.password} onChange={handleChange} required/>
                 </div>
                 <div className="col-span-full">
-                    <label
-                        htmlFor="email"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Email
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                        type="email"
-                        id="email"
-                        name="email"
-                        autoComplete="email"
-                        placeholder=""
-                        className="mt-2"
-
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
+                    <InputField id="email" type="email" label="Email" value={formData.email}
+                                onChange={handleChange} required/>
                 </div>
                 <div className="col-span-full">
-                    <label
-                        htmlFor="address"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Dirección
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="address"
-                        name="address"
-                        autoComplete="street-address"
-                        placeholder=""
-                        className="mt-2"
-                        value={formData.address}
-                        onChange={handleChange}
-                    />
+                    <InputField id="address" type="text" label="Dirección" value={formData.address}
+                                onChange={handleChange}/>
                 </div>
                 <div className="col-span-full">
-                    <label
-                        htmlFor="gender"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Género
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="gender"
-                        name="gender"
-                        placeholder=""
-                        className="mt-2"
-                        value={formData.gender}
-                        onChange={handleChange}
-                    />
+                    <InputField id="gender" type="text" label="Género" value={formData.gender}
+                                onChange={handleChange}/>
                 </div>
+                {/*<div className="col-span-full">*/}
+                {/*    <InputField id="profilePic" type="text" label="Foto de Perfil"*/}
+                {/*                value={formData.profilePic} onChange={handleChange}/>*/}
+                {/*</div>*/}
                 <div className="col-span-full">
-                    <label
-                        htmlFor="profilePic"
-                        className="text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong"
-                    >
-                        Foto de Perfil
-                    </label>
-                    <TextInput
-                        type="text"
-                        id="profilePic"
-                        name="profilePic"
-                        placeholder=""
-                        className="mt-2"
-                        value={formData.profilePic}
+                    <InputField
+                        id="file_input"
+                        type="file"
+                        label="Foto de perfil"
                         onChange={handleChange}
                     />
                 </div>
             </div>
             <Divider/>
             <NavLinkCard>
-                <button type="submit">
-                    Enviar
-                </button>
+                <button type="submit">Enviar</button>
             </NavLinkCard>
         </form>
     </>);

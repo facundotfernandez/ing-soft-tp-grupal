@@ -13,12 +13,11 @@ const UserProfileIcon = () => {
 
     const {
         user,
-        setUser
+        logout,
     } = useContext(UserContext);
 
     const handleLogout = () => {
-        setShowLogout(false);
-        setUser(null);
+        logout();
         goToLogin();
     };
 

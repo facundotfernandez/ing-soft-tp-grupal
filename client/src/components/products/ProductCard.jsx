@@ -18,9 +18,6 @@ export const ProductCard = ({
                         <p className="truncate text-tremor-default font-medium text-dark-tremor-content-strong">
                             {product.name}
                         </p>
-                        <p className="truncate text-tremor-default text-dark-tremor-content">
-                            {`Stock: ${product.stock}`}
-                        </p>
                     </div>
                 </div>
             </Card>

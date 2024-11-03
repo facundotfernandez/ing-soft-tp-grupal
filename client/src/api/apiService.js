@@ -23,6 +23,12 @@ export const update = async (key, id, data) => {
     return response.data;
 };
 
+export const patch = async (key, id, data) => {
+    const apiUrl = `${getApiUrl()}/${key}/${id}`;
+    const response = await axios.patch(apiUrl, data, {headers: await getAuthHeaders()});
+    return response.data;
+};
+
 export const remove = async (key, id) => {
     const apiUrl = `${getApiUrl()}/${key}/${id}`;
     const response = await axios.delete(apiUrl, {headers: await getAuthHeaders()});

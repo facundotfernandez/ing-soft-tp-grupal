@@ -1,5 +1,5 @@
 import {createContext, useEffect, useState} from 'react';
-import {createLogin, createRegister} from "@api/createRequests";
+import {createLogin, createRecovery, createRegister} from "@api/createRequests";
 import PropTypes from "prop-types";
 
 export const UserContext = createContext(undefined, undefined);
@@ -10,23 +10,12 @@ export const UserProvider = ({children}) => {
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem('user_data');
-        if (storedUser) setUser(JSON.parse(storedUser)); else login(GUEST_ROLE, GUEST_ROLE);
-    }, []);
-
-    useEffect(() => {
-        if (user) {
-            saveUserData(user);
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
         } else {
-            localStorage.removeItem('access_token');
-            sessionStorage.removeItem('user_data');
             login(GUEST_ROLE, GUEST_ROLE);
         }
-    }, [user]);
-
-    const saveUserData = (user) => {
-        localStorage.setItem('access_token', user.accessToken);
-        sessionStorage.setItem('user_data', JSON.stringify(user));
-    }
+    }, []);
 
     const login = async (username, password) => {
         const userData = await createLogin({
@@ -40,18 +29,23 @@ export const UserProvider = ({children}) => {
         sessionStorage.setItem('user_data', JSON.stringify(userData));
     };
 
+    const logout = () => {
+        login(GUEST_ROLE, GUEST_ROLE);
+    };
+
     const register = async (formData) => {
         await createRegister(formData);
     };
 
     const recovery = async (email) => {
-        // TODO
+        await createRecovery(email);
     };
 
     return (<UserContext.Provider value={{
         user,
         setUser,
         login,
+        logout,
         register,
         recovery
     }}>
@@ -59,7 +53,6 @@ export const UserProvider = ({children}) => {
     </UserContext.Provider>);
 };
 
-// Define PropTypes
 UserProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };

@@ -7,30 +7,42 @@ import java.util.UUID;
 public class Variant {
 
         private String vid;
-        private Map<String, String> characteristics;
+        private int stock;
+        private Map<String, String> specs;
 
         public Variant() {
                 this.vid = UUID.randomUUID().toString();
-                this.characteristics = new HashMap<>();
+                this.stock = 0;
+                this.specs = new HashMap<>();
         }
 
         public String getVid() {
                 return vid;
         }
 
-        public void addCharacteristic(String key, String value) {
-                characteristics.put(key, value);
+        public int getStock() {
+                return stock;
         }
 
-        public Map<String, String> getCharacteristics() {
-                return characteristics;
+        public void setStock(int stock) {
+                this.stock = stock;
         }
 
-        public void setCharacteristics(Map<String, String> characteristics) {
-                this.characteristics = characteristics;
+        public void addSspecs(String key, String value) {
+                specs.put(key, value);
+        }
+
+        public Map<String, String> getSpecs() {
+                return specs;
+        }
+
+        public void setSpecs(Map<String, String> specs) {
+                this.specs = specs;
         }
 
         public String toString() {
-                return characteristics.toString();
+                return specs.toString();
         }
 }
+
+

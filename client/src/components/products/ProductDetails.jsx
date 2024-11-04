@@ -1,95 +1,99 @@
 import { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeaderCell,
+    TableRow,
+} from '@tremor/react';
 import { NavIcon } from "@components/icons/NavIcon";
 import { NavLinkCard } from "@components/buttons/NavLinkCard";
 import Column from "@components/structures/Column";
 import { ToastNotification } from "@components/notifications/ToastNotification";
 import { InputField } from "@components/inputs/InputField";
-import { updateVariant } from "@api/updateRequests";
+import { patchVariant } from "@api/patchRequests";
+import { useToast } from "@hooks/useToast";
 
-export const ProductDetails = ({ product, handleAddToCart, handleEdit, role }) => {
+export const ProductDetails = ({ product, handleAddToCart, role }) => {
     const [editingVariant, setEditingVariant] = useState(null);
     const [variantData, setVariantData] = useState({});
+    const { toastMessage, showToast, setToastMessage, setShowToast } = useToast();
 
-    if (!product) return <ToastNotification message={"El producto no existe"} isVisible={true} />;
+    const showToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+    };
 
-    const variantKeys = Object.keys(product.variants[0].specs || {}).filter(key => key !== 'id');
-    const availableVariants = role === 'admin'
-        ? product.variants
-        : product.variants.filter(variant => variant.stock > 0);
+    if (!product) {
+        return <ToastNotification message={"El producto no existe"} isVisible={true} />;
+    }
+
+    const { variants } = product;
+    const variantKeys = Object.keys(variants[0].specs || {});
+    const availableVariants = role === 'admin' ? variants : variants.filter(variant => variant.stock > 0);
 
     const handleInputChange = (key, value) => {
         setVariantData(prev => ({ ...prev, [key]: value }));
     };
 
     const handleSave = async (variantId) => {
-        const newStock = variantData.stock || product.stock;
+        const newStock = variantData.stock !== undefined ? variantData.stock : product.stock;
         if (newStock < 0) {
-            alert("El stock no puede ser menor a 0");
+            showToastMessage("El stock no puede ser menor a 0");
             return;
         }
 
         try {
-            await updateVariant(product._id, variantId, variantData);
+            await patchVariant(product._id, variantId, { stock: newStock });
             setEditingVariant(null);
         } catch (error) {
-            console.error("Error al actualizar la variante:", error);
+            showToastMessage("Error al actualizar la variante");
+            console.error(error);
         }
     };
 
-    const renderTableCell = (variant, key) => {
-        return editingVariant === variant.id ? (
-            <InputField
-                type="text"
-                value={variantData[key] || variant.specs[key]}
-                onChange={(e) => handleInputChange(key, e.target.value)}
-                className="border rounded p-1 w-full"
-            />
-        ) : (
-            variant.specs[key]
-        );
-    };
+    const renderTableCell = (variant, key) => variant.specs[key];
 
-    const renderStockCell = (variant) => {
-        return editingVariant === variant.id ? (
+    const renderStockCell = (variant) => (
+        editingVariant === variant.vid ? (
             <InputField
                 type="number"
                 value={variantData.stock || variant.stock}
                 onChange={(e) => handleInputChange('stock', e.target.value)}
-                className="border rounded p-1 w-full"
+                className="border rounded p-1"
             />
         ) : (
             variant.stock
-        );
-    };
+        )
+    );
 
     const renderActionCell = (variant) => {
         if (role === "client") {
             return (
                 <NavLinkCard
-                    onClick={() => handleAddToCart(variant.id)}
+                    onClick={() => handleAddToCart(variant.vid)}
                     className={"flex justify-center place-items-center w-20"}
                 >
-                    <NavIcon type={"view"} iconId={"cart"} />
+                    <NavIcon type={"view"} iconId={"cart-plus"} />
                 </NavLinkCard>
             );
         } else if (role === "admin") {
-            return editingVariant === variant.id ? (
-                <NavLinkCard
-                    onClick={() => handleSave(variant.id)}
-                    className={"flex justify-center place-items-center w-20"}
-                >
-                    <NavIcon type={"view"} iconId={"save"} />
-                </NavLinkCard>
-            ) : (
+            return (
                 <NavLinkCard
                     onClick={() => {
-                        setEditingVariant(variant.id);
-                        setVariantData({ ...variant.specs, stock: variant.stock });
+                        if (editingVariant === variant.vid) {
+                            handleSave(variant.vid);
+                        } else {
+                            setEditingVariant(variant.vid);
+                            console.log(variant)
+                            console.log(variant.vid);
+                            setVariantData({ ...variant.specs, stock: variant.stock });
+                        }
                     }}
                     className={"flex justify-center place-items-center w-20"}
                 >
-                    <NavIcon type={"view"} iconId={"pen"} />
+                    <NavIcon type={"view"} iconId={editingVariant === variant.vid ? "save" : "pen"} />
                 </NavLinkCard>
             );
         }
@@ -98,6 +102,7 @@ export const ProductDetails = ({ product, handleAddToCart, handleEdit, role }) =
 
     return (
         <Column className={"overflow-x-auto p-4"}>
+            <ToastNotification message={toastMessage} isVisible={showToast} />
             <h1 className="text-xl font-bold">{product.name}</h1>
             <div className="overflow-hidden border rounded-md">
                 <Table className="min-w-full">
@@ -108,15 +113,15 @@ export const ProductDetails = ({ product, handleAddToCart, handleEdit, role }) =
                             </TableHeaderCell>
                             {variantKeys.map((key) => (
                                 <TableHeaderCell key={key} className="text-dark-tremor-content-strong text-center">
-                                    {key.charAt(0).toUpperCase() + key.slice(1)} {/* Capitalize first letter */}
+                                    {key.charAt(0).toUpperCase() + key.slice(1)}
                                 </TableHeaderCell>
                             ))}
-                            <TableHeaderCell/>
+                            <TableHeaderCell />
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {availableVariants.map((variant) => (
-                            <TableRow key={variant.id} className="hover:bg-dark-tremor-background-muted">
+                            <TableRow key={variant.vid} className="hover:bg-dark-tremor-background-muted">
                                 <TableCell className="font-medium text-dark-tremor-content-strong text-center">
                                     {renderStockCell(variant)}
                                 </TableCell>

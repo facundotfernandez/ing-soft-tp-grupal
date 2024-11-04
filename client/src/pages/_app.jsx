@@ -8,15 +8,15 @@ function App({
                  Component,
                  pageProps
              }) {
-    return (<UserProvider>
-        <ProductsProvider>
-            <OrdersProvider>
+    return (<ProductsProvider>
+        <OrdersProvider>
+            <UserProvider>
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>
-            </OrdersProvider>
-        </ProductsProvider>
-    </UserProvider>);
+            </UserProvider>
+        </OrdersProvider>
+    </ProductsProvider>);
 }
 
 export default App;

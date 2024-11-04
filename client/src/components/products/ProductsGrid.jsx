@@ -25,10 +25,11 @@ export default function ProductsGrid() {
     return (<TabGroup className="text-right">
         <TabPanels>
             <Grid>
-                {products.map((product) => (<ProductCard
-                    key={product._id}
+                {products.map((product, index ) => (<ProductCard
+                    key={index + "-" + product._id}
                     product={product}
-                    onClick={() => handleClick(product._id)}
+                    // onClick={() => handleClick(product._id)}
+                    onClick={() => handleClick(product.name)}
                 />))}
             </Grid>
         </TabPanels>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { data as productsLocalData } from '@mocks/products';
-// import { getProducts } from "@api/readRequests";
+import {getProducts} from "@api/readRequests";
 
 const useProducts = () => {
     const [products, setProducts] = useState([]);
@@ -11,9 +10,8 @@ const useProducts = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                // const response = await getProducts();
-                // setProducts(response); TODO API HANDLE
-                setProducts(productsLocalData);
+                const response = await getProducts();
+                setProducts(response);
             } catch (err) {
                 setError(err.message || 'Error desconocido');
             } finally {

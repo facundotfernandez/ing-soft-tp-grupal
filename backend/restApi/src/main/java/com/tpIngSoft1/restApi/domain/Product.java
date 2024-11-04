@@ -10,7 +10,6 @@ import java.util.List;
 
 @Document(collection = "products")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Product {
         @Id

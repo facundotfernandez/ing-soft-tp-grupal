@@ -1,68 +1,55 @@
-import {createContext, useEffect, useState} from 'react';
-import {createLogin, createRecovery, createRegister} from "@api/createRequests";
-import PropTypes from "prop-types";
+import React, {createContext} from 'react';
+import PropTypes from 'prop-types';
+import {useUser} from '@hooks/useUser'; // Importamos el hook
 
 export const UserContext = createContext(undefined, undefined);
 
 export const UserProvider = ({children}) => {
-    const [user, setUser] = useState(null);
-    const GUEST_ROLE = 'guest';
-
-    useEffect(() => {
-        const storedUser = sessionStorage.getItem('user_data');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        } else {
-            login(GUEST_ROLE, GUEST_ROLE);
-        }
-    }, []);
-
-    const login = async (username, password) => {
-        const userData = await createLogin({
-            username,
-            password
-        });
-
-        setUser(userData);
-
-        localStorage.setItem('access_token', userData.accessToken);
-        sessionStorage.setItem('user_data', JSON.stringify(userData));
-    };
-
-    const logout = () => {
-        login(GUEST_ROLE, GUEST_ROLE);
-    };
-
-    const register = async (formData) => {
-        await createRegister(formData);
-    };
-
-    const recovery = async (email) => {
-        await createRecovery(email);
-    };
-
-    return (<UserContext.Provider value={{
+    const {
         user,
-        setUser,
+        loading,
+        error,
+        requestMsg,
+        setRequestMsg,
         login,
         logout,
         register,
         recovery
-    }}>
-        {children}
-    </UserContext.Provider>);
+    } = useUser();
+
+    return (<UserContext.Provider
+            value={{
+                user,
+                loading,
+                error,
+                requestMsg,
+                setRequestMsg,
+                login,
+                logout,
+                register,
+                recovery
+            }}
+        >
+            {children}
+        </UserContext.Provider>);
 };
 
 UserProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired
 };
 
 UserContext.propTypes = {
     user: PropTypes.shape({
         accessToken: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        profilePic: PropTypes.string.isRequired,
+        role: PropTypes.string.isRequired
     }),
-    setUser: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
+    requestMsg: PropTypes.string.isRequired,
     login: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
-    recovery: PropTypes.func.isRequired,
+    recovery: PropTypes.func.isRequired
 };

@@ -17,16 +17,16 @@ export const OrderDetails = ({ order }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {order.products.map((product) => (
-                            <TableRow key={product.idVariant} className="select-none hover:bg-dark-tremor-background-muted">
+                        {order.items.map((item) => (
+                            <TableRow key={item.vid} className="select-none hover:bg-dark-tremor-background-muted">
                                 <TableCell className="font-medium text-dark-tremor-content-strong text-center">
-                                    {product.name}
+                                    {item.name}
                                 </TableCell>
                                 <TableCell className="font-medium text-dark-tremor-content-strong text-center">
-                                    {product.amount}
+                                    {item.quantity}
                                 </TableCell>
                                 <TableCell className="font-medium text-dark-tremor-content-strong text-center">
-                                    {Object.entries(product.details).map(([key, value]) => (
+                                    {Object.entries(item.specs).map(([key, value]) => (
                                         <div key={key}>{`${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`}</div>
                                     ))}
                                 </TableCell>

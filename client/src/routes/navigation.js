@@ -5,6 +5,7 @@ export const routes = {
     order: 'orders/',
     orders: 'orders',
     product: 'products/',
+    productCreate: 'products/create',
     products: 'products',
     recovery: 'recovery',
     register: 'register'

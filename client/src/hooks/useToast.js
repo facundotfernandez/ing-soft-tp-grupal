@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from 'react';
 
-export const useToast = (initialMessage = '') => {
-    const [toastMessage, setToastMessage] = useState(initialMessage);
+export const useToast = (error, requestMsg) => {
+    const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        setToastMessage('');
-    }, [initialMessage]);
+        if (error && requestMsg) {
+            setToastMessage(requestMsg || 'Error desconocido');
+        }
+    }, [error, requestMsg]);
 
     useEffect(() => {
-        if (showToast) {
-            const timer = setTimeout(() => setShowToast(false), 3000);
-            return () => clearTimeout(timer);
-        }
+        const timer = setTimeout(() => setShowToast(false), 3000);
+        return () => clearTimeout(timer);
     }, [showToast]);
 
     return {
         toastMessage,
         showToast,
         setToastMessage,
-        setShowToast,
+        setShowToast
     };
 };

@@ -2,9 +2,7 @@ package com.tpIngSoft1.restApi.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import com.tpIngSoft1.restApi.domain.Variant;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
 
@@ -21,9 +19,12 @@ public class Product {
 
         public Product() {};
 
-        public Product(String name, String description, String brand, Double price) {
+        public Product(String id, String name) {
+                this.id = id;
                 this.name = name;
         }
+
+        public String getId() { return id; };
 
         public String getName() { return name; }
 

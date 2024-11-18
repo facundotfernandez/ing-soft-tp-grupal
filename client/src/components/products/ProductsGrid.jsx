@@ -26,10 +26,9 @@ export default function ProductsGrid() {
         <TabPanels>
             <Grid>
                 {products.map((product, index ) => (<ProductCard
-                    key={index + "-" + product._id}
+                    key={index + "-" + product.id}
                     product={product}
-                    // onClick={() => handleClick(product._id)}
-                    onClick={() => handleClick(product.name)}
+                    onClick={() => handleClick(product.id)}
                 />))}
             </Grid>
         </TabPanels>

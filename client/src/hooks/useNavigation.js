@@ -38,6 +38,10 @@ export const useNavigation = () => {
         handleNavigation(routes.product + id);
     });
 
+    const goToProductCreate = ((id) => {
+        handleNavigation(routes.productCreate);
+    });
+
     const goToProducts = (() => {
         handleNavigation(routes.products);
     });
@@ -57,6 +61,7 @@ export const useNavigation = () => {
         goToRecovery,
         goToRegister,
         goToProduct,
+        goToProductCreate,
         goToProducts,
         goToOrder,
         goToOrders,

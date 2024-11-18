@@ -1,0 +1,34 @@
+{
+  "type": "Not",
+  "rule": {
+    "type": "And",
+    "rule1": {
+      "type": "Comparison",
+      "comparisonType": {
+        "type": "Individual"
+      },
+      "condition": {
+        "type": "VarCondition",
+        "key": "Tipo",
+        "operator": {
+          "type": "Equal"
+        },
+        "value": "Liquido"
+      }
+    },
+    "rule2": {
+      "type": "Comparison",
+      "comparisonType": {
+        "type": "Individual"
+      },
+      "condition": {
+        "type": "VarCondition",
+        "key": "Tipo",
+        "operator": {
+          "type": "Equal"
+        },
+        "value": "Gaseoso"
+      }
+    }
+  }
+}

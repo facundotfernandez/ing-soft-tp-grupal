@@ -5,7 +5,8 @@ export const createOrder = async (data) => {
 };
 
 export const createLogin = async (data) => {
-    return await create('login', data);
+    const basicAuthHeader = 'Basic ' + btoa(data.username + ':' + data.password);
+    return await create('login', data, basicAuthHeader);
 };
 
 export const createRegister = async (data) => {

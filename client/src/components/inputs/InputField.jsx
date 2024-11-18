@@ -9,7 +9,8 @@ export const InputField = ({
                                label,
                                value,
                                onChange,
-                               required = false
+                               required = false,
+                               disabled = false,
                            }) => (<Column className={"gap-y-1"}>
     <label
         htmlFor={id}
@@ -26,5 +27,6 @@ export const InputField = ({
         placeholder={placeholder || ""}
         onChange={onChange}
         value={value}
+        disabled={disabled || false}
     />
 </Column>);

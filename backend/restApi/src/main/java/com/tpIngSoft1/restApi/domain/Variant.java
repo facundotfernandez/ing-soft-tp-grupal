@@ -16,6 +16,18 @@ public class Variant {
                 this.specs = new HashMap<>();
         }
 
+        public Variant(Map<String, String> specs, int stock) {
+                this.vid = UUID.randomUUID().toString();
+                this.specs = specs;
+                this.stock = stock;
+        }
+
+        public Variant(Map<String, String> specs, int stock, String vid) {
+                this.vid = vid;
+                this.specs = specs;
+                this.stock = stock;
+        }
+
         public String getVid() {
                 return vid;
         }

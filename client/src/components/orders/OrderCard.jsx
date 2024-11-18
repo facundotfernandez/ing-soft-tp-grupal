@@ -1,35 +1,63 @@
+import {useState} from "react";
 import {Card} from '@tremor/react';
-import {NavIcon} from '@components/icons/NavIcon';
+import {ConfirmationModal} from "@components/notifications/ConfirmationModal";
+import {useUser} from "@hooks/useUser";
+import {OrderActions} from "@components/orders/OrderActions";
+import {OrderIcon} from "@components/orders/OrderIcon";
+import {OrderCardDetails} from "@components/orders/OrderCardDetails";
 
 export const OrderCard = ({
-                       order,
-                       index,
-                       onClick,
-                   }) => {
+                              order,
+                              onClick
+                          }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [orderToDelete, setOrderToDelete] = useState(null);
+    const {user} = useUser();
 
-    const uniqueProductNames = Array.from(new Set(order.products.map(product => product.name)));
-    let productNames = uniqueProductNames.join(', ');
+    const handleDeleteOrder = (orderId, e) => {
+        e.stopPropagation();
+        setOrderToDelete(orderId);
+        setIsModalOpen(true);
+    };
 
-    return (<div className="shadow hover:shadow-blue-900 hover:shadow-lg">
-        <Card className="group p-4 hover:cursor-pointer" onClick={onClick}>
-            <div className="flex items-center gap-x-4">
-                <NavIcon
-                    className="fa-solid bg-blue-100 bg-blue-500/20 text-blue-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-tremor-full text-tremor-default"
-                    aria-hidden={true}
-                    type="icon"
-                    iconId="bag-shopping"
-                />
-                <div className="truncate">
-                    <p className="text-sm text-dark-tremor-content-strong">
-                        {productNames}
-                    </p>
-                    <p className="truncate text-tremor-default text-dark-tremor-content">
-                        {`Orden ${index + 1}`}
-                    </p>
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setOrderToDelete(null);
+    };
+
+    const confirmDelete = () => {
+        if (orderToDelete) {
+            console.log(`Order deleted: ${orderToDelete}`);
+        }
+    };
+
+    const handleNewStatus = async (e, orderId, newStatus) => {
+        e.stopPropagation();
+        // const response = await patchOrder(orderId, newStatus);
+        // alert(response?.message);
+    };
+
+    return (<>
+        <div className="shadow hover:shadow-blue-900 hover:shadow-lg">
+            <Card className="group p-4 hover:cursor-pointer" onClick={onClick}>
+                <div className="flex items-center gap-x-4">
+                    <OrderIcon
+                        order={order}
+                        userRole={user?.role}
+                        onDelete={handleDeleteOrder}
+                    />
+                    <OrderCardDetails order={order}/>
+                    <OrderActions order={order} userRole={user?.role} handleNewStatus={handleNewStatus}/>
                 </div>
-            </div>
-        </Card>
-    </div>);
+            </Card>
+        </div>
+        <ConfirmationModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onConfirm={confirmDelete}
+            message="¿Estás muy muy muy seguro de que querés eliminar esta orden?"
+        />
+    </>);
 };
 
 export default OrderCard;

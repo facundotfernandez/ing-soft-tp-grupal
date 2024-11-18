@@ -21,14 +21,14 @@ public class User {
     private String gender;
     private String profilePic;
     private String role;
+    private String refreshToken;
 
     public User() {
     }
 
-    public User(String name, String email, String id, String accessToken, String username, String lastname, String password, String address, String gender, String profilePic, String role) {
+    public User(String name, String email, String id, String accessToken, String username, String lastname, String password, String address, String gender, String profilePic, String role, String refreshToken) {
         this.name = name;
         this.email = email;
-        this.accessToken = accessToken;
         this.username = username;
         this.lastname = lastname;
         this.password = password;
@@ -36,6 +36,8 @@ public class User {
         this.gender = gender;
         this.profilePic = profilePic;
         this.role = role;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public String getName() {
@@ -109,6 +111,15 @@ public class User {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
 
     public String getRole() {
         return role;

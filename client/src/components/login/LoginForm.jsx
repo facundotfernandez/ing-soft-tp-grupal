@@ -1,60 +1,61 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect} from "react";
 import {UserContext} from "@context/UserProvider";
 import {ToastNotification} from "@components/notifications/ToastNotification";
 import Column from "@components/structures/Column";
 import {useToast} from "@hooks/useToast";
-import LoginButton from "./LoginButton";
+import {useFormField} from "@hooks/useFormField";
+import LoginButton from "@components/login/LoginButton";
 import {ActionLinks} from "@components/login/ActionLinks";
-import {InputField} from "@components/inputs/InputField";
-import PropTypes from "prop-types";
 import {areFieldsFilled} from "@utils/validations";
 import {useNavigation} from "@hooks/useNavigation";
+import {InputField} from "@components/inputs/InputField";
 
 export const LoginForm = () => {
     const {
         user,
-        login
+        login,
+        error,
+        requestMsg,
+        setRequestMsg,
     } = useContext(UserContext);
-    const {goToHome, goToRegister, goToRecovery} = useNavigation();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const {
+        goToHome,
+        goToRegister,
+        goToRecovery
+    } = useNavigation();
+
     const {
         toastMessage,
         showToast,
-        setToastMessage,
         setShowToast
-    } = useToast();
+    } = useToast(error, requestMsg);
 
-    const showToastMessage = (message) => {
-        setToastMessage(message);
-        setShowToast(true);
-    };
+    const [username, handleUsernameChange] = useFormField('', setShowToast);
+    const [password, handlePasswordChange] = useFormField('', setShowToast);
 
-    const handleInputChange = (setter) => (e) => {
-        setter(e.target.value);
-        setShowToast(false);
-    };
+    useEffect(() => {
+        if (!error && user && user?.username !== 'guest') {
+            goToHome();
+        }
+    }, [user, error, requestMsg, setShowToast, setRequestMsg, goToHome]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (user && user.username !== "guest") {
-            showToastMessage('Ya iniciaste sesión');
+        if (user && user.role !== 'guest') {
+            setRequestMsg('Ya iniciaste sesión');
+            setShowToast(true);
             return;
         }
 
         if (!areFieldsFilled([username, password])) {
-            showToastMessage('Por favor, completa todos los campos.');
+            setRequestMsg('Por favor, completa todos los campos');
+            setShowToast(true);
             return;
         }
 
-        try {
-            setShowToast(false);
-            await login(username, password);
-            goToHome();
-        } catch (err) {
-            showToastMessage("El Usuario no existe");
-        }
+        await login(username, password);
+        setShowToast(true);
     };
 
     return (<>
@@ -67,31 +68,23 @@ export const LoginForm = () => {
                 type="text"
                 placeholder="Ingresa tu usuario"
                 value={username}
-                onChange={handleInputChange(setUsername)}
+                onChange={handleUsernameChange}
             />
             <InputField
                 id="password"
                 type="password"
                 placeholder="Ingresa tu contraseña"
                 value={password}
-                onChange={handleInputChange(setPassword)}
+                onChange={handlePasswordChange}
             />
             <Column className="place-items-center">
                 <LoginButton onSubmit={handleSubmit}/>
                 <ActionLinks
-                    onRegisterClick={() => goToRegister()}
-                    onForgetPassword={() => goToRecovery()}
+                    onRegisterClick={goToRegister}
+                    onForgetPassword={goToRecovery}
                 />
             </Column>
         </form>
         <ToastNotification message={toastMessage} isVisible={showToast}/>
     </>);
-};
-
-
-UserContext.propTypes = {
-    user: PropTypes.shape({
-        username: PropTypes.string.isRequired,
-        password: PropTypes.string.isRequired,
-    }),
 };

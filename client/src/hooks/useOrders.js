@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
-import {data as ordersLocalData} from '@mocks/orders';
-// import { getOrders } from "@api/readRequests";
+import {getOrders} from "@api/readRequests";
 
 const useOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -11,9 +10,8 @@ const useOrders = () => {
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                // const response = await getOrders();
-                // setOrders(response); TODO API HANDLE
-                setOrders(ordersLocalData);
+                const response = await getOrders();
+                setOrders(response.data);
             } catch (err) {
                 setError(err.message || 'Error desconocido');
             } finally {

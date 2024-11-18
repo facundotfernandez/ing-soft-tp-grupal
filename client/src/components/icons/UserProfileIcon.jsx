@@ -53,7 +53,7 @@ const UserProfileIcon = () => {
             />
             <h2 className={" text-xs p-0"}>Hola {user.name}!</h2>
         </NavLinkCard>
-        {showLogout && (<div className="absolute mt-20 right-4 bg-white shadow-lg rounded">
+        {showLogout && (<div className="absolute mt-20 right-4 bg-white shadow-lg rounded z-50">
             <NavLinkCard
                 onClick={handleLogout}
                 className="text-xs p-2 bg-red-900 hover:bg-red-700"

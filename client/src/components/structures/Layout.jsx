@@ -1,14 +1,20 @@
 import UserProfileIcon from "@components/icons/UserProfileIcon";
 import {useNavigation} from "@hooks/useNavigation";
-import {NavViewLinks} from "@components/structures/NavViewLinks";
+import {NavViewLinks} from "@components/buttons/NavViewLinks";
+import {useEffect} from "react";
 
 const Header = () => {
     const {
         goToHome,
         goToOrders,
         goToProducts,
+        goToProductCreate,
         goToCart
     } = useNavigation();
+
+    useEffect(() => {
+        document.title = `FiubApp`;
+    }, []);
 
     return (<header className="flex justify-between items-center bg-gray-700 p-4 w-full">
         <NavViewLinks
@@ -16,6 +22,7 @@ const Header = () => {
             goToProducts={goToProducts}
             goToOrders={goToOrders}
             goToCart={goToCart}
+            goToProductCreate={goToProductCreate}
         />
         <UserProfileIcon/>
     </header>);

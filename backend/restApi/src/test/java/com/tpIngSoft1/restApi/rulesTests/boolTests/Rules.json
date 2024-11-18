@@ -1,0 +1,57 @@
+{
+    "type": "And",
+    "rule1": {
+        "type": "Or",
+        "rule1": {
+            "type": "Comparison",
+            "comparisonType": {
+                "type": "CountAny"
+            },
+            "condition": {
+                "type": "VarCondition",
+                "key": "Tipo",
+                "operator": {
+                    "type": "LessThan"
+                },
+                "value": "4"
+            }
+        },
+        "rule2": {
+            "type": "Comparison",
+            "comparisonType": {
+                "type": "Count",
+                "filterCondition": {
+                    "type": "VarCondition",
+                    "key": "Talle",
+                    "operator": {
+                        "type": "Equal"
+                    },
+                    "value": "XS"
+                }
+            },
+
+            "condition": {
+                "type": "VarCondition",
+                "key": "Total",
+                "operator": {
+                    "type": "LessThan"
+                },
+                "value": "6"
+            }
+        }
+    },
+    "rule2": {
+        "type": "Comparison",
+        "comparisonType": {
+            "type": "Individual"
+        },
+        "condition": {
+            "type": "VarCondition",
+            "key": "Peso",
+            "operator": {
+                "type": "Equal"
+            },
+            "value": "30"
+        }
+    }
+}

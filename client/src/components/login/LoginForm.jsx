@@ -1,14 +1,13 @@
 import {useContext, useEffect} from "react";
 import {UserContext} from "@context/UserProvider";
-import {ToastNotification} from "@components/notifications/ToastNotification";
 import Column from "@components/structures/Column";
-import {useToast} from "@hooks/useToast";
 import {useFormField} from "@hooks/useFormField";
 import LoginButton from "@components/login/LoginButton";
 import {ActionLinks} from "@components/login/ActionLinks";
 import {areFieldsFilled} from "@utils/validations";
 import {useNavigation} from "@hooks/useNavigation";
 import {InputField} from "@components/inputs/InputField";
+import {showToast} from "@components/notifications/ToastManager";
 
 export const LoginForm = () => {
     const {
@@ -24,38 +23,30 @@ export const LoginForm = () => {
         goToRecovery
     } = useNavigation();
 
-    const {
-        toastMessage,
-        showToast,
-        setShowToast
-    } = useToast(error, requestMsg);
-
-    const [username, handleUsernameChange] = useFormField('', setShowToast);
-    const [password, handlePasswordChange] = useFormField('', setShowToast);
+    const [username, handleUsernameChange] = useFormField('');
+    const [password, handlePasswordChange] = useFormField('');
 
     useEffect(() => {
         if (!error && user && user?.username !== 'guest') {
             goToHome();
         }
-    }, [user, error, requestMsg, setShowToast, setRequestMsg, goToHome]);
+    }, [user, error, requestMsg, setRequestMsg, goToHome]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (user && user.role !== 'guest') {
-            setRequestMsg('Ya iniciaste sesión');
-            setShowToast(true);
+            showToast.error("Ya iniciaste sesión");
             return;
         }
 
         if (!areFieldsFilled([username, password])) {
-            setRequestMsg('Por favor, completa todos los campos');
-            setShowToast(true);
+            showToast.error("Por favor, completa todos los campos");
             return;
         }
 
         await login(username, password);
-        setShowToast(true);
+        showToast.success("Iniciaste sesión");
     };
 
     return (<>
@@ -85,6 +76,5 @@ export const LoginForm = () => {
                 />
             </Column>
         </form>
-        <ToastNotification message={toastMessage} isVisible={showToast}/>
     </>);
 };

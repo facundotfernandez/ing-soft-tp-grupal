@@ -1,8 +1,7 @@
 import {useContext, useState} from "react";
 import {UserContext} from "@context/UserProvider";
-import {ToastNotification} from "@components/notifications/ToastNotification";
+import {showToast} from "@components/notifications/ToastManager";
 import Column from "@components/structures/Column";
-import {useToast} from "@hooks/useToast";
 import RecoveryButton from "./RecoveryButton";
 import {useNavigation} from "@hooks/useNavigation";
 import {InputField} from "@components/inputs/InputField";
@@ -12,33 +11,21 @@ export const RecoveryForm = () => {
     const {recovery} = useContext(UserContext);
     const [email, setEmail] = useState('');
 
-    const {
-        toastMessage,
-        showToast,
-        setToastMessage,
-        setShowToast
-    } = useToast();
-
-    const showToastMessage = (message) => {
-        setToastMessage(message);
-        setShowToast(true);
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!email) {
-            showToastMessage('Por favor, ingresa un mail válido.');
+            showToast.error('Por favor, ingresa un mail válido.');
             return;
         }
 
         try {
-            setShowToast(false);
             await recovery(email);
+            showToast.info("Datos enviados al correo");
             goToHome();
         } catch (err) {
-            let msg = "El email no pertenece a un usuario";
-            showToastMessage(msg);
+            showToast.error("El email no pertenece a un usuario");
         }
     };
 
@@ -52,7 +39,6 @@ export const RecoveryForm = () => {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => {
-                    setShowToast(false);
                     setEmail(e.target.value);
                 }}
             />
@@ -60,6 +46,5 @@ export const RecoveryForm = () => {
                 <RecoveryButton onSubmit={handleSubmit}/>
             </Column>
         </form>
-        <ToastNotification message={toastMessage} isVisible={showToast}/>
     </>);
 };

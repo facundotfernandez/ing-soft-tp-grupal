@@ -3,9 +3,11 @@ import {useNavigation} from "@hooks/useNavigation";
 import {OrderCard} from './OrderCard';
 import Grid from "@components/structures/Grid";
 import Loader from "@components/notifications/Loader";
-import {ToastNotification} from "@components/notifications/ToastNotification";
+import {showToast} from "@components/notifications/ToastManager";
 import useOrders from "@hooks/useOrders";
 import {shortenId} from "@utils/idShortener";
+import NotFound from "next/dist/client/components/not-found-error";
+import React from "react";
 
 export default function OrdersGrid() {
     const {
@@ -21,7 +23,10 @@ export default function OrdersGrid() {
 
 
     if (loading) return (<Loader/>);
-    if (error) return <ToastNotification message={`Error: ${error.message}`} isVisible={true}/>;
+    if (error) {
+        showToast.error("Error al procesar las órdenes");
+        return (<NotFound/>);
+    }
 
     return (<TabGroup className="text-right">
         <TabPanels>

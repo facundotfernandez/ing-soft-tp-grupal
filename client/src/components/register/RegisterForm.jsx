@@ -1,7 +1,6 @@
 import {Divider} from '@tremor/react';
-import {ToastNotification} from "@components/notifications/ToastNotification";
+import {showToast} from "@components/notifications/ToastManager";
 import {useContext, useEffect, useState} from "react";
-import {useToast} from "@hooks/useToast";
 import {useNavigation} from "@hooks/useNavigation";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import {UserContext} from "@context/UserProvider";
@@ -29,13 +28,6 @@ export const RegisterForm = () => {
         password: ''
     });
 
-    const {
-        toastMessage,
-        showToast,
-        setToastMessage,
-        setShowToast
-    } = useToast(error, requestMsg);
-
     const handleChange = (e) => {
         const {
             name,
@@ -45,18 +37,16 @@ export const RegisterForm = () => {
             ...prevData,
             [name]: value
         }));
-        setShowToast(false);
     };
 
     useEffect(() => {
         if (!error && requestMsg === 'Usuario registrado exitosamente') {
             goToLogin();
         }
-    }, [error, requestMsg, setShowToast, setToastMessage, goToLogin, user]);
+    }, [error, requestMsg, goToLogin, user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setShowToast(true);
 
         const {
             username,
@@ -67,7 +57,7 @@ export const RegisterForm = () => {
         } = formData;
 
         if (!username || !password || !email || !name || !lastname) {
-            setToastMessage('Por favor, completa todos los campos obligatorios.');
+            showToast.error('Por favor, completa todos los campos obligatorios.');
             return;
         }
 
@@ -75,7 +65,6 @@ export const RegisterForm = () => {
     };
 
     return (<>
-        <ToastNotification message={toastMessage} isVisible={showToast}/>
         <form onSubmit={handleSubmit}
               className="bg-gray-950 rounded-lg flex flex-col w-fit gap-y-4 justify-center items-center p-4">
             <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-6">

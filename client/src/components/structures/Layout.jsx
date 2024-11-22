@@ -2,6 +2,7 @@ import UserProfileIcon from "@components/icons/UserProfileIcon";
 import {useNavigation} from "@hooks/useNavigation";
 import {NavViewLinks} from "@components/buttons/NavViewLinks";
 import {useEffect} from "react";
+import {ToastManager} from "@components/notifications/ToastManager";
 
 const Header = () => {
     const {
@@ -35,6 +36,7 @@ const Footer = () => (<footer className="bg-gray-700 p-3 w-full">
 const Layout = ({children}) => (<div className="dark min-h-screen flex flex-col justify-between">
     <Header/>
     <main className="p-4 flex-grow">
+        <ToastManager theme={"dark"}/>
         {children}
     </main>
     <Footer/>

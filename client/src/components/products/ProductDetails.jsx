@@ -3,33 +3,23 @@ import {Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow,} from
 import {NavIcon} from "@components/icons/NavIcon";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import Column from "@components/structures/Column";
-import {ToastNotification} from "@components/notifications/ToastNotification";
+import {showToast} from "@components/notifications/ToastManager";
 import {InputField} from "@components/inputs/InputField";
 import {patchVariant} from "@api/patchRequests";
-import {useToast} from "@hooks/useToast";
+import Loader from "@components/notifications/Loader";
+import NotFound from "next/dist/client/components/not-found-error";
 
 export const ProductDetails = ({
                                    product,
                                    handleAddToCart,
-                                   role
+                                   role,
+                                   loading,
                                }) => {
     const [editingVariant, setEditingVariant] = useState(null);
     const [variantData, setVariantData] = useState({});
-    const {
-        toastMessage,
-        showToast,
-        setToastMessage,
-        setShowToast
-    } = useToast();
 
-    const showToastMessage = (message) => {
-        setToastMessage(message);
-        setShowToast(true);
-    };
-
-    if (!product) {
-        return <ToastNotification message={"El producto no existe"} isVisible={true}/>;
-    }
+    if (loading) return <Loader/>;
+    if (!product) return <NotFound/>;
 
     const {variants} = product;
     const variantKeys = Object.keys(variants[0].specs || {});
@@ -45,7 +35,7 @@ export const ProductDetails = ({
     const handleSave = async (variantId) => {
         const newStock = variantData.stock !== undefined ? variantData.stock : product.stock;
         if (newStock < 0) {
-            showToastMessage("El stock no puede ser menor a 0");
+            showToast.error("El stock no puede ser menor a 0");
             return;
         }
 
@@ -53,7 +43,7 @@ export const ProductDetails = ({
             await patchVariant(product.id, variantId, {stock: newStock});
             setEditingVariant(null);
         } catch (error) {
-            showToastMessage("Error al actualizar la variante");
+            showToast.error("Error al actualizar la variante");
             console.error(error);
         }
     };
@@ -97,7 +87,6 @@ export const ProductDetails = ({
     };
 
     return (<Column className={"overflow-x-auto p-4"}>
-        <ToastNotification message={toastMessage} isVisible={showToast}/>
         <h1 className="text-xl font-bold">{product.name}</h1>
         <div className="overflow-hidden border rounded-md">
             <Table className="min-w-full">

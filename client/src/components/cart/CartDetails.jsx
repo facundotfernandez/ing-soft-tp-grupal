@@ -1,12 +1,12 @@
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
-import ReactDOM from 'react-dom'
 import Column from "@components/structures/Column";
-import {ToastNotification} from "@components/notifications/ToastNotification";
+import {showToast} from "@components/notifications/ToastManager";
 import useCart from "@hooks/useCart";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import useProducts from "@hooks/useProducts";
 import {useUser} from "@hooks/useUser";
+import NotFound from "next/dist/client/components/not-found-error";
 
 export const CartDetails = ({ }) => {
 
@@ -16,8 +16,8 @@ export const CartDetails = ({ }) => {
     //llamar userId desde userContext o algo
 
     if (!cart || cart.length === 0) {
-        console.log("El carrito está vacío o no tiene productos.");
-        return <ToastNotification message={"El carrito está vacío"} isVisible={true} />;
+        showToast.error("El carrito está vacío o no tiene productos.");
+        return <NotFound/>;
     }
     //la decision fue guardar solos los prodsId y vid en el carrito y luego checkear en vez de que el carrito tenga el producto completo
     return (

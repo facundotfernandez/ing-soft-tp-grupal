@@ -1,6 +1,6 @@
 import {unshortenId} from "@utils/idShortener";
 import {ProductDetails} from "@components/products/ProductDetails";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "@context/UserProvider";
 import useProducts from "@hooks/useProducts";
 import useCart from "@hooks/useCart";
@@ -10,14 +10,20 @@ export const ProductContainer = ({productId}) => {
         products,
     } = useProducts();
 
+    const [loading, setLoading] = useState(true);
+
     const {addToCart} = useCart();
 
     const id = productId ? unshortenId(productId) : null;
     const product = products.find(prod => prod.id === id);
     const {user} = useContext(UserContext);
 
+    useEffect(() => {
+        if (product) setLoading(false);
+    }, [product]);
+
     const handleAddToCart = (variant, prodName, prodId) => {
-        console.log("añade al carrito",prodName );
+        console.log("añade al carrito", prodName);
         console.log("wipi");
         addToCart(variant, prodName, prodId);
         //addToCart(variant, quantity);
@@ -29,5 +35,5 @@ export const ProductContainer = ({productId}) => {
     };
 
     return <ProductDetails product={product} handleAddToCart={handleAddToCart} handleEdit={handleEdit}
-                           role={user?.role}/>;
+                           role={user?.role} loading={loading} setLoading={setLoading}/>;
 };

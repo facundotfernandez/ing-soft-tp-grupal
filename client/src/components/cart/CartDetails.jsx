@@ -26,7 +26,8 @@ export const CartDetails = ({ }) => {
     }, [cart]);
 
     if (loading) {
-        showToast.error("El carrito está vacío o no tiene productos.");
+        // showToast.error("El carrito está vacío o no tiene productos.");
+        <></>
     }
 
 

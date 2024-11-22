@@ -1,24 +1,35 @@
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
 import Column from "@components/structures/Column";
-import {showToast} from "@components/notifications/ToastManager";
 import useCart from "@hooks/useCart";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import useProducts from "@hooks/useProducts";
 import {useUser} from "@hooks/useUser";
-import NotFound from "next/dist/client/components/not-found-error";
+import {showToast} from "@components/notifications/ToastManager";
+import {useEffect, useState} from "react";
+import Loader from "@components/notifications/Loader";
 
 export const CartDetails = ({ }) => {
 
+    const [loading, setLoading] = useState(false);
     const {cart, setCart, clearCart, removeFromCart, buyCart} = useCart();//addToCart //removeFromCart
     const {products } = useProducts(); //lo uso para hacer un search y renderizar los productos
     const {user} = useUser();
     //llamar userId desde userContext o algo
 
-    if (!cart || cart.length === 0) {
+    useEffect(() => {
+        if (!cart || cart.length === 0) {
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+    }, [cart]);
+
+    if (loading) {
         showToast.error("El carrito está vacío o no tiene productos.");
-        return <NotFound/>;
     }
+
+
     //la decision fue guardar solos los prodsId y vid en el carrito y luego checkear en vez de que el carrito tenga el producto completo
     return (
         <Column className={"overflow-x-auto p-4"}>

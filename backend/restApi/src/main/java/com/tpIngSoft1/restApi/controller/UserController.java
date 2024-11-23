@@ -1,5 +1,6 @@
 package com.tpIngSoft1.restApi.controller;
 
+import com.tpIngSoft1.restApi.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,7 @@ import com.tpIngSoft1.restApi.service.UserService;
 import com.tpIngSoft1.restApi.dto.UserDTO;
 import com.tpIngSoft1.restApi.utils.ApiResponse;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -132,5 +130,32 @@ public class UserController {
         ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Ha iniciado sesión", foundUser.get());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/recovery")
+    public ResponseEntity<ApiResponse<String>> recoverPassword(@RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Ah Ah Ah! No dijiste la palabra mágica", "");
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtService.getUsernameFromToken(token);
+
+        if (username == null || !jwtService.validateToken(token)) {
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token Invalido", "");
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+
+        Optional<User> foundUser = userService.findUserByUsername(username);
+        if (foundUser.isEmpty()) {
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "No se encontró al usuario", "");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Contraseña recuperada", foundUser.get().getPassword());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

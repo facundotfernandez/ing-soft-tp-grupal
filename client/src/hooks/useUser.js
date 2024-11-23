@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {createLogin, createRecovery, createRegister} from "@api/createRequests";
+import {createEmail, createLogin, createRecovery, createRegister} from "@api/createRequests";
 import {getUser} from "@api/readRequests";
+import {useNavigation} from "@hooks/useNavigation";
 
 const GUEST_ROLE = 'guest';
 
@@ -9,6 +10,11 @@ export const useUser = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(true);
     const [requestMsg, setRequestMsg] = useState('');
+
+    const {
+        goToHome,
+        goToLogin
+    } = useNavigation();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -49,7 +55,17 @@ export const useUser = () => {
             password
         });
 
-        await saveUser(request);
+        if (request.status === 'success') {
+            await saveUser(request);
+        }
+
+        setLoading(false);
+
+        return {
+            status: request.status,
+            message: request.message,
+            error: request.status === 'error',
+        };
     };
 
     const logout = async () => {
@@ -60,16 +76,40 @@ export const useUser = () => {
         localStorage.removeItem('access_token');
         sessionStorage.removeItem('user_data');
 
-        await login(GUEST_ROLE, GUEST_ROLE);
+        const request = await login(GUEST_ROLE, GUEST_ROLE);
+
+        const isError = request.status === 'error';
+        const message = request.message;
+
+        if (!isError) {
+            goToLogin();
+        }
+
+        return {
+            status: request.status,
+            message: message
+        };
     };
 
     const register = async (formData) => {
         setLoading(true);
         const request = await createRegister(formData);
 
+        const isError = request.status === 'error';
+        const message = request.message;
+
+        if (!isError) {
+            await login(formData.username, formData.password);
+            await createEmail(formData.email, "Registración", `Usuario ${formData.username} registrado exitosamente`);
+            goToHome();
+        }
+
         setLoading(false);
-        setError(request.status === 'error');
-        setRequestMsg(request.message);
+
+        return {
+            status: request.status,
+            message: message
+        };
     };
 
     const recovery = async (email) => {
@@ -80,6 +120,7 @@ export const useUser = () => {
         setLoading(false);
         setError(request.status === 'error');
         setRequestMsg(request.message);
+        return request.data;
     };
 
     return {

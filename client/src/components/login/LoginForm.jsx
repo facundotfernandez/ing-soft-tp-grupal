@@ -45,8 +45,13 @@ export const LoginForm = () => {
             return;
         }
 
-        await login(username, password);
-        showToast.success("Iniciaste sesión");
+        const { status, message, error } = await login(username, password);
+
+        if (error) {
+            showToast.error(`Error al iniciar sesión: ${message}`);
+        } else if (status === 'success') {
+            showToast.success("Iniciaste sesión exitosamente");
+        }
     };
 
     return (<>

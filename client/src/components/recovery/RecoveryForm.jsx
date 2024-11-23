@@ -5,6 +5,7 @@ import Column from "@components/structures/Column";
 import RecoveryButton from "./RecoveryButton";
 import {useNavigation} from "@hooks/useNavigation";
 import {InputField} from "@components/inputs/InputField";
+import {createEmail} from "@api/createRequests";
 
 export const RecoveryForm = () => {
     const {goToHome} = useNavigation();
@@ -21,7 +22,8 @@ export const RecoveryForm = () => {
         }
 
         try {
-            await recovery(email);
+            const pwRecovery = await recovery(email);
+            await createEmail(email, "Recuperación", `Su contraseña es: ${pwRecovery}`);
             showToast.info("Datos enviados al correo");
             goToHome();
         } catch (err) {

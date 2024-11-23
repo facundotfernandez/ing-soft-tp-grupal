@@ -3,6 +3,7 @@ import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import {useNavigation} from "@hooks/useNavigation"
 import Image from 'next/image'
 import {UserContext} from "@context/UserProvider";
+import {showToast} from "@components/notifications/ToastManager";
 
 const UserProfileIcon = () => {
     const {
@@ -16,9 +17,15 @@ const UserProfileIcon = () => {
         logout,
     } = useContext(UserContext);
 
-    const handleLogout = () => {
-        logout();
-        goToLogin();
+    const handleLogout = async () => {
+        const { status, message } = await logout();
+
+        if (status === 'error') {
+            showToast.error(`Error al cerrar sesión: ${message}`);
+        } else {
+            showToast.success("Sesión cerrada exitosamente.");
+            goToLogin();
+        }
     };
 
     if (!user || user.role === 'guest') {

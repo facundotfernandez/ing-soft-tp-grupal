@@ -1,22 +1,18 @@
 import {Divider} from '@tremor/react';
 import {showToast} from "@components/notifications/ToastManager";
-import {useContext, useEffect, useState} from "react";
-import {useNavigation} from "@hooks/useNavigation";
+import {useContext, useState} from "react";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import {UserContext} from "@context/UserProvider";
 import {InputField} from "@components/inputs/InputField";
 
 export const RegisterForm = () => {
     const {
-        user,
         register,
         error,
-        requestMsg,
-        setRequestMsg
+        requestMsg
     } = useContext(UserContext);
 
 
-    const {goToLogin} = useNavigation();
     const [formData, setFormData] = useState({
         email: '',
         name: '',
@@ -39,12 +35,6 @@ export const RegisterForm = () => {
         }));
     };
 
-    useEffect(() => {
-        if (!error && requestMsg === 'Usuario registrado exitosamente') {
-            goToLogin();
-        }
-    }, [error, requestMsg, goToLogin, user]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -61,7 +51,16 @@ export const RegisterForm = () => {
             return;
         }
 
-        await register(formData);
+        const {
+            status,
+            message
+        } = await register(formData);
+
+        if (status === 'error') {
+            showToast.error(message);
+        } else {
+            showToast.success(message);
+        }
     };
 
     return (<>

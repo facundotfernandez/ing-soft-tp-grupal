@@ -20,3 +20,11 @@ export const createRecovery = async (data) => {
 export const createProduct = async (data) => {
     return await create('products', data);
 };
+
+export const createEmail = async (email, subject, body) => {
+    return await create('sendemail', {
+        to: email,
+        subject: subject,
+        body: body,
+    });
+};

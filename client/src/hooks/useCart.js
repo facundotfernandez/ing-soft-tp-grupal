@@ -56,9 +56,9 @@ const useCart = () => {
 
     };
 
-    const buyCart = async (userName) => {
+    const buyCart = async (username) => {
         const orderData = {
-            userName,
+            username,
             items: cart.map(item => ({
                 vid: item.variant.vid,
                 pid: item.prodId,
@@ -71,6 +71,7 @@ const useCart = () => {
         console.log("ORDEN: ",orderData);
         try {
             const response = await createApi("orders", orderData); //mando la key y la lista
+            console.log("response: ",response.status);
             if (response.status === "success") {
                 alert("Orden creada exitosamente");
                 setCart([]);

@@ -42,7 +42,7 @@ class OrderController {
     private JwtService jwtService;
 
     @PostMapping
-    public ResponseEntity<String> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws IOException {
+    public ResponseEntity<ApiResponse<String>> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
@@ -50,18 +50,21 @@ class OrderController {
             Rule rule = mapper.readValue(inputStream, Rule.class);
             List<Variant> variant = orderService.convertToOrderItems(orderDTO.getItems());
             if (!rule.evaluate(variant)) {
-                return new ResponseEntity<>("No cumple las reglas", HttpStatus.CONFLICT);
+                ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
+                return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
             }
         } catch (IOException e) {
             System.err.println(e);
-            return new ResponseEntity<>("Falla archivo de reglas", HttpStatus.CONFLICT);
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Falla archivo de reglas", null);
+            return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
         
         List<OrderItem> items = orderDTO.getItems();
         Order order = new Order(orderDTO.getUsername(),"confirmado", LocalDateTime.now(), items);
         orderService.saveOrder(order);
         
-        return new ResponseEntity<>("Orden agregada exitosamente", HttpStatus.CREATED);
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success",  "Orden agregada exitosamente",null);
+        return new ResponseEntity<ApiResponse<String>>(response,HttpStatus.OK);
     }
 
     @GetMapping
@@ -82,7 +85,7 @@ class OrderController {
         } else {
             orders = orderService.getOrdersByUsername(username);
         }
-
+        System.out.println(orders); // devuelve vacio si se hace por el front
         ApiResponse<List<Order>> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "La orden existe", orders);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

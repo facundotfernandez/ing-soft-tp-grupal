@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 import {create as createApi} from "@api/apiService";
+import {patchVariant} from "@api/patchRequests";
+
 const useCart = () => {
     const [cart, setCart] = useState([]);
 
@@ -7,42 +9,21 @@ const useCart = () => {
     const clearCart = () =>{
         setCart([]);
     };
-    /*
-     const addToCart = (variant, quantity) => {
-            setCart((prevCart) => {
-                console.log("Agregando a carrito");
-                const isAlreadyInCart = prevCart.some(
-                    (item) => item.vid === variant.vid && item.name === variant.name
-                );//checkeo si la variante ya esta agregada
-                if (isAlreadyInCart) {
-                    console.log("Producto ya agregado, no se agrega de vuelta");
-                    return prevCart; // Si ya existe, no lo agrega
-                }
-                console.log("Agregado correctamente");
 
-                return [...prevCart, variant]; // Si no existe, lo agrega
-            });
-     };
-    */
     const addToCart = (variant, prodName, prodId) => {
         setCart((prevCart) => {
-            console.log("Agregando a carrito");
-
             // Verificar si ya existe el mismo variant asociado al producto
             const alreadyAdded = prevCart.some(
                 (item) => item.variant.vid === variant.vid && item.prodName === prodName
             );
 
             if (alreadyAdded) {
-                console.log("Producto ya agregado, sumo cantidad");
                 return prevCart.map((item) =>
                     item.variant.vid === variant.vid
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             }
-
-            console.log("Agregado correctamente");
             // Si no existe, se agrega una nueva entrada
             return [
                 ...prevCart,
@@ -63,24 +44,38 @@ const useCart = () => {
                 vid: item.variant.vid,
                 pid: item.prodId,
                 name: item.prodName,
-                //product.name
+                stock: item.variant.stock,
                 quantity: item.quantity,
                 specs: item.variant.specs
             })),
         };
-        console.log("ORDEN: ",orderData);
         try {
             const response = await createApi("orders", orderData); //mando la key y la lista
-            console.log("response: ",response.status);
             if (response.status === "success") {
-                alert("Orden creada exitosamente");
-                setCart([]);
+                //cambiar el stock de los productos
+                try {
+                    await Promise.all(
+                        orderData.items.map(async (item) => {
+                            const newStock = item.stock - item.quantity;
+                            if (newStock < 0) {
+                                throw new Error(`Stock insuficiente para el producto ${item.name}`);
+                            }
+                            await patchVariant(item.pid, item.vid, {stock:newStock});
+                        })
+                    );
+                    alert("Orden creada exitosamente");
+                    alert("Stock actualizado exitosamente");
+                    setCart([]); // Vaciar el carrito
+                } catch (error) {
+                    showToast.error("Error al actualizar el stock del producto");
+                    console.error(error);
+                }
+
             } else {
                 alert(`Hubo un problema al procesar tu orden: ${response.message}`);
             }
         } catch (error) {
-            alert("Error al procesar tu orden");
-            console.error(error);
+            alert("Error al procesar tu orden, no hay stock suficiente");
         }
 
     };
@@ -89,7 +84,6 @@ const useCart = () => {
 
     useEffect(() => {
             try {
-                console.log("Cargando carrito desde localStorage...");
                 const storedCart = localStorage.getItem('cart_data');
                 if (storedCart) {
                     const parsedCart = JSON.parse(storedCart);
@@ -98,13 +92,11 @@ const useCart = () => {
                     }
                 }
             } catch (error) {
-                console.error("Error cargando el carrito desde localStorage:", error);
                 setCart([]);
             }
         }, []);
 
     useEffect(() => {
-        console.log("Carrito actual:", cart);
         if (cart.length > 0) {
             localStorage.setItem('cart_data', JSON.stringify(cart));
         }

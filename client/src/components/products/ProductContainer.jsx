@@ -23,10 +23,7 @@ export const ProductContainer = ({productId}) => {
     }, [product]);
 
     const handleAddToCart = (variant, prodName, prodId) => {
-        console.log("añade al carrito", prodName);
-        console.log("wipi");
         addToCart(variant, prodName, prodId);
-        //addToCart(variant, quantity);
 
     };
 

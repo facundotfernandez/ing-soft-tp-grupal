@@ -8,6 +8,7 @@ import {areFieldsFilled} from "@utils/validations";
 import {useNavigation} from "@hooks/useNavigation";
 import {InputField} from "@components/inputs/InputField";
 import {showToast} from "@components/notifications/ToastManager";
+import useCart from "@hooks/useCart";
 
 export const LoginForm = () => {
     const {
@@ -25,6 +26,8 @@ export const LoginForm = () => {
 
     const [username, handleUsernameChange] = useFormField('');
     const [password, handlePasswordChange] = useFormField('');
+
+    const {clearCart} = useCart();
 
     useEffect(() => {
         if (!error && user && user?.username !== 'guest') {
@@ -50,6 +53,7 @@ export const LoginForm = () => {
         if (error) {
             showToast.error(`Error al iniciar sesión: ${message}`);
         } else if (status === 'success') {
+            clearCart();
             showToast.success("Iniciaste sesión exitosamente");
         }
     };

@@ -3,7 +3,7 @@ import Column from "@components/structures/Column";
 import useCart from "@hooks/useCart";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import useProducts from "@hooks/useProducts";
+
 import {useUser} from "@hooks/useUser";
 import {showToast} from "@components/notifications/ToastManager";
 import {useEffect, useState} from "react";
@@ -13,7 +13,6 @@ export const CartDetails = ({ }) => {
 
     const [loading, setLoading] = useState(false);
     const {cart, setCart, clearCart, removeFromCart, buyCart} = useCart();//addToCart //removeFromCart
-    const {products } = useProducts(); //lo uso para hacer un search y renderizar los productos
     const {user} = useUser();
     //llamar userId desde userContext o algo
 

@@ -3,8 +3,10 @@ package com.tpIngSoft1.restApi.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
+import java.util.ArrayList;
 
 @Document(collection = "products")
 @Data
@@ -15,18 +17,22 @@ public class Product {
 
         private String name;
 
-        private List<Variant> variants;
+        private List<Variant> variants = new ArrayList<>();
 
-        public Product() {};
+        public Product() {
+                this.variants = new ArrayList<>();
+        }
 
-        public Product(String id, String name) {
-                this.id = id;
+        public Product(String name, String description, String brand, Double price) {
                 this.name = name;
         }
 
-        public String getId() { return id; };
+        public void setId(String id) {
+                this.id = id;
+        }
 
         public String getName() { return name; }
+
 
         public void setName(String name) { this.name = name; }
 
@@ -34,4 +40,3 @@ public class Product {
 
         public void setVariants(List<Variant> variants) { this.variants = variants; }
 }
-

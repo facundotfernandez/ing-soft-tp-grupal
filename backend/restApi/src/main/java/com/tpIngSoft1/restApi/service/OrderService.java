@@ -6,6 +6,7 @@ import com.tpIngSoft1.restApi.domain.Variant;
 import com.tpIngSoft1.restApi.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.io.InputStream;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,5 +39,8 @@ public class OrderService {
 
     public List<Variant> convertToOrderItems(List<OrderItem> items) {
         return items.stream().map(orderitem -> new Variant(orderitem.getSpecs(), orderitem.getQuantity(), orderitem.getVid() )).collect(Collectors.toList());
+    }
+    public InputStream getResourceAsStream(String path) {
+        return getClass().getClassLoader().getResourceAsStream(path);
     }
 }

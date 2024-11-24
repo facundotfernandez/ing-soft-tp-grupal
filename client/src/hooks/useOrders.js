@@ -11,7 +11,7 @@ const useOrders = () => {
             setLoading(true);
             try {
                 const response = await getOrders();
-                setOrders(response.data);
+                setOrders(Array.isArray(response.data) ? response.data : []);
             } catch (err) {
                 setError(err.message || 'Error desconocido');
             } finally {

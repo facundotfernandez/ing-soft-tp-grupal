@@ -18,11 +18,8 @@ export const useUser = () => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const storedUser = sessionStorage.getItem('user_data');
             const storedToken = localStorage.getItem('access_token');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            } else if (storedToken) {
+            if (storedToken) {
                 const requestUser = await getUser();
                 await saveUser(requestUser);
             } else {

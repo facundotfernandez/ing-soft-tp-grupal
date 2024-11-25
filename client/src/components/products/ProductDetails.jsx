@@ -40,7 +40,7 @@ export const ProductDetails = ({
         }
 
         try {
-            await patchVariant(product.id, variantId, {stock: newStock});
+            await patchVariant(product.id, variantId, newStock);
             setEditingVariant(null);
         } catch (error) {
             showToast.error("Error al actualizar la variante");

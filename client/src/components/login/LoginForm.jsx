@@ -8,7 +8,7 @@ import {areFieldsFilled} from "@utils/validations";
 import {useNavigation} from "@hooks/useNavigation";
 import {InputField} from "@components/inputs/InputField";
 import {showToast} from "@components/notifications/ToastManager";
-import useCart from "@hooks/useCart";
+import {CartContext} from "@context/CartProvider";
 
 export const LoginForm = () => {
     const {
@@ -48,7 +48,11 @@ export const LoginForm = () => {
             return;
         }
 
-        const { status, message, error } = await login(username, password);
+        const {
+            status,
+            message,
+            error
+        } = await login(username, password);
 
         if (error) {
             showToast.error(`Error al iniciar sesión: ${message}`);

@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import useOrders from "@hooks/useOrders";
+import {useOrders} from "@hooks/useOrders";
 
 export const OrdersContext = createContext(undefined, undefined);
 
@@ -8,7 +8,7 @@ export const OrdersProvider = ({children}) => {
         orders,
         loading,
         error
-    } = useContext(OrdersContext);
+    } = useOrders();
 
     return (<OrdersContext.Provider value={{
         orders,

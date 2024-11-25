@@ -1,6 +1,6 @@
 import React, {createContext} from 'react';
 import PropTypes from 'prop-types';
-import {useUser} from '@hooks/useUser'; // Importamos el hook
+import {useUser} from '@hooks/useUser';
 
 export const UserContext = createContext(undefined, undefined);
 
@@ -18,20 +18,20 @@ export const UserProvider = ({children}) => {
     } = useUser();
 
     return (<UserContext.Provider
-            value={{
-                user,
-                loading,
-                error,
-                requestMsg,
-                setRequestMsg,
-                login,
-                logout,
-                register,
-                recovery
-            }}
-        >
-            {children}
-        </UserContext.Provider>);
+        value={{
+            user,
+            loading,
+            error,
+            requestMsg,
+            setRequestMsg,
+            login,
+            logout,
+            register,
+            recovery
+        }}
+    >
+        {children}
+    </UserContext.Provider>);
 };
 
 UserProvider.propTypes = {

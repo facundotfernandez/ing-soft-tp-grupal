@@ -2,13 +2,13 @@ import {unshortenId} from "@utils/idShortener";
 import {ProductDetails} from "@components/products/ProductDetails";
 import {useContext, useEffect, useState} from "react";
 import {UserContext} from "@context/UserProvider";
-import useProducts from "@hooks/useProducts";
-import useCart from "@hooks/useCart";
+import {CartContext} from "@context/CartProvider";
+import {ProductsContext} from "@context/ProductsProvider";
 
 export const ProductContainer = ({productId}) => {
     const {
         products,
-    } = useProducts();
+    } = useContext(ProductsContext);
 
     const [loading, setLoading] = useState(true);
 

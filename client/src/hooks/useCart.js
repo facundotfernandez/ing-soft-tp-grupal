@@ -3,7 +3,7 @@ import {create as createApi} from "@api/apiService";
 import {patchVariant} from "@api/patchRequests";
 import {showToast} from "@components/notifications/ToastManager";
 
-const useCart = () => {
+export const useCart = () => {
     const [cart, setCart] = useState([]);
 
     //Limpiar el carrito cuando se desloggea el usuario
@@ -39,7 +39,7 @@ const useCart = () => {
     };
 
     const buyCart = async (username) => {
-        if (cart.length == 0){
+        if (cart.length === 0) {
             showToast.error("Agrega objetos al carrito antes de continuar");
             return
         }
@@ -114,5 +114,3 @@ const useCart = () => {
         buyCart
     };
 };
-
-export default useCart;

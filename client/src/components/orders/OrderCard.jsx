@@ -1,13 +1,12 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {Card} from '@tremor/react';
 import {ConfirmationModal} from "@components/notifications/ConfirmationModal";
-import {useUser} from "@hooks/useUser";
 import {OrderActions} from "@components/orders/OrderActions";
 import {OrderIcon} from "@components/orders/OrderIcon";
 import {OrderCardDetails} from "@components/orders/OrderCardDetails";
 import {showToast} from "@components/notifications/ToastManager";
 import {patchOrder} from "@api/patchRequests";
-import {OrdersContext} from "@context/OrdersProvider";
+import {UserContext} from "@context/UserProvider";
 
 export const OrderCard = ({
                               order,
@@ -15,7 +14,7 @@ export const OrderCard = ({
                               cancelOrder
                           }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const {user} = useUser();
+    const {user} = useContext(UserContext);
 
     const handleDeleteOrder = () => {
         setIsModalOpen(true);

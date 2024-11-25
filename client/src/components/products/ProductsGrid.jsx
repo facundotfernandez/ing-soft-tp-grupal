@@ -5,15 +5,16 @@ import {shortenId} from "@utils/idShortener";
 import Loader from "@components/notifications/Loader";
 import {showToast} from "@components/notifications/ToastManager";
 import Grid from "@components/structures/Grid";
-import useProducts from "@hooks/useProducts";
 import NotFound from "next/dist/client/components/not-found-error";
+import {useContext} from "react";
+import {ProductsContext} from "@context/ProductsProvider";
 
 export default function ProductsGrid() {
     const {
         products,
         loading,
         error
-    } = useProducts();
+    } = useContext(ProductsContext);
     const {goToProduct} = useNavigation();
 
     const handleClick = (prodId) => {

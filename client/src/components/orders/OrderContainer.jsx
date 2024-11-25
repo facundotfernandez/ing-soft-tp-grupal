@@ -1,12 +1,13 @@
 import {unshortenId} from "@utils/idShortener";
 import {OrderDetails} from "@components/orders/OrderDetails";
-import useOrders from "@hooks/useOrders";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {OrdersContext} from "@context/OrdersProvider";
 
 const OrderContainer = ({orderId}) => {
     const {
         orders,
     } = useContext(OrdersContext);
+
     const [loading, setLoading] = useState(true);
 
     const id = orderId ? unshortenId(orderId) : null;

@@ -1,12 +1,11 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow} from '@tremor/react';
 import {InputField} from "@components/inputs/InputField";
 import {NavLinkCard} from "@components/buttons/NavLinkCard";
 import Column from "@components/structures/Column";
 import {NavIcon} from "@components/icons/NavIcon";
 import {createProduct} from "@api/createRequests";
-import NotFound from "next/dist/client/components/not-found-error";
-import {useUser} from "@hooks/useUser";
+import {UserContext} from "@context/UserProvider";
 
 const AttributesSection = ({
                                attributes,
@@ -104,7 +103,7 @@ export const ProductCreate = () => {
     const [variants, setVariants] = useState([]);
     const [attributesLocked, setAttributesLocked] = useState(false);
 
-    const {user} = useUser();
+    const {user} = useContext(UserContext);
 
     const handleAttributeChange = (index, field, value) => {
         const updatedAttributes = [...attributes];

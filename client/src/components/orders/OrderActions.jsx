@@ -1,5 +1,3 @@
-import orderId from "@pages/orders/[orderId]";
-
 export const OrderActions = ({
                                  order,
                                  userRole,

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import {getProducts} from "@api/readRequests";
 
-const useProducts = () => {
+export const useProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,7 +22,9 @@ const useProducts = () => {
         fetchProducts();
     }, []);
 
-    return { products, loading, error };
+    return {
+        products,
+        loading,
+        error
+    };
 };
-
-export default useProducts;

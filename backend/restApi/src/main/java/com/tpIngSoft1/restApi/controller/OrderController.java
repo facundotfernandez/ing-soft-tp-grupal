@@ -68,17 +68,16 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Order>>> getAllOrders(@RequestHeader("Authorization") String authHeader) {
-        System.out.println("Cabecera de autorización: " + authHeader);
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            ApiResponse<List<Order>> errorResponse = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Ah Ah Ah! No dijiste la palabra mágica", null);
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
         }
 
         String token = authHeader.substring(7);
-        String username = jwtService.getUsernameFromToken(token);
-        System.out.println("Usuario extraído del token: " + username);
+        if (!jwtService.validateToken(token)) {
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
+        }
 
+        String username = jwtService.getUsernameFromToken(token);
         List<Order> orders;
 
         try {
@@ -87,15 +86,11 @@ public class OrderController {
             } else {
                 orders = orderService.getOrdersByUsername(username);
             }
-            System.out.println("Órdenes recuperadas: " + orders);
         } catch (Exception e) {
-            System.err.println("Error al recuperar órdenes: " + e.getMessage());
-            ApiResponse<List<Order>> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", "Error al recuperar órdenes: " + e.getMessage(), null);
-            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", "Error al recuperar órdenes: " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        ApiResponse<List<Order>> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "La orden existe", orders);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Órdenes recuperadas", orders), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")

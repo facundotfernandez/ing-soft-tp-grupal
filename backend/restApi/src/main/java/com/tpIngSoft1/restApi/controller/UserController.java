@@ -90,7 +90,6 @@ public class UserController {
         ApiResponse<User> response = new ApiResponse<>(HttpStatus.CREATED.value(), "success", "Usuario registrado exitosamente", null);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<Map<String, String>>> refreshAccessToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
@@ -98,10 +97,8 @@ public class UserController {
             String username = jwtService.getUsernameFromToken(refreshToken);
             User user = userService.findByUsername(username).orElseThrow();
             String newAccessToken = jwtService.generateAccessToken(user);
-            String newRefreshToken = jwtService.generateRefreshToken(user);
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", newAccessToken);
-            tokens.put("refreshToken", newRefreshToken);
             ApiResponse<Map<String, String>> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Tokens actualizados exitosamente", tokens);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

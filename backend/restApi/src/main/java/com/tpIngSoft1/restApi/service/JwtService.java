@@ -11,14 +11,6 @@ public class JwtService {
     @Value("${jwt.secret.key}")
     private String SECRET_KEY;
 
-    public String generateAccessToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 2_592_000_000L)) // 30 días
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-    }
 
     public boolean validateToken(String token) {
         try {
@@ -29,19 +21,28 @@ public class JwtService {
         }
     }
 
-    public String generateRefreshToken(User user) {
-        long expirationTime = 2_592_000_000L;
+    public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))   // 30 días para Refresh Token
+                .setExpiration(new Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000)) // 30 dias
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
+
+    public String generateRefreshToken(User user) {
+        long expirationTime = 2_592_000_000L; // 30 days for Refresh Token
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
 
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
-
 }

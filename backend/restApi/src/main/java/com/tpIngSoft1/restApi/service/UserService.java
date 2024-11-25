@@ -33,10 +33,12 @@ public class UserService {
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAccessToken(jwtService.generateAccessToken(user));
+        user.setRefreshToken(jwtService.generateRefreshToken(user));
         user.setProfilePic("https://avatar.iran.liara.run/public");
         user.setRole("client");
         return userRepository.save(user);
     }
+
 
     public Optional<User> findUserByUsernameAndPassword(String username, String password) {
         Optional<User> user = userRepository.findByUsername(username);

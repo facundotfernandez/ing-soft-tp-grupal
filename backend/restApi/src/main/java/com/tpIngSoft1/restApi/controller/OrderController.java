@@ -97,17 +97,18 @@ public class OrderController {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Body no correcto", null), HttpStatus.CONFLICT);
         }
 
+        String newStatus = status.get("status");
         Set<String> validStatuses = Set.of("en proceso", "procesado", "enviado", "cancelado");
-        if (!validStatuses.contains(status.get("status"))) {
+        if (!validStatuses.contains(newStatus)) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Status no correcto", null), HttpStatus.CONFLICT);
         }
 
         Optional<Order> order = orderService.findById(id);
         if (order.isPresent()) {
             Order orderToUp = order.get();
-            orderToUp.setStatus(status.get("status"));
+            orderToUp.setStatus(newStatus);
             orderService.saveOrder(orderToUp);
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Order cambia a estado: " + status, null), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Order cambia a estado: " + newStatus, null), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Order no encontrada", null), HttpStatus.NOT_FOUND);
         }

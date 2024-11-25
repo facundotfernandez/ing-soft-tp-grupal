@@ -5,36 +5,31 @@ import {useUser} from "@hooks/useUser";
 import {OrderActions} from "@components/orders/OrderActions";
 import {OrderIcon} from "@components/orders/OrderIcon";
 import {OrderCardDetails} from "@components/orders/OrderCardDetails";
+import {showToast} from "@components/notifications/ToastManager";
+import {patchOrder} from "@api/patchRequests";
 
 export const OrderCard = ({
                               order,
                               onClick
                           }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [orderToDelete, setOrderToDelete] = useState(null);
     const {user} = useUser();
 
-    const handleDeleteOrder = (orderId, e) => {
-        e.stopPropagation();
-        setOrderToDelete(orderId);
+    const handleDeleteOrder = () => {
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setOrderToDelete(null);
     };
 
     const confirmDelete = () => {
-        if (orderToDelete) {
-            console.log(`Order deleted: ${orderToDelete}`);
-        }
+        handleNewStatus(order?.id, "cancelado");
     };
 
-    const handleNewStatus = async (e, orderId, newStatus) => {
-        e.stopPropagation();
-        // const response = await patchOrder(orderId, newStatus);
-        // alert(response?.message);
+    const handleNewStatus = async (orderId, newStatus) => {
+        const response = await patchOrder(orderId, {status: newStatus});
+        showToast.success(response?.message);
     };
 
     return (<>

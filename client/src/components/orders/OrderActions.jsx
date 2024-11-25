@@ -33,7 +33,8 @@ export const OrderActions = ({
     return ((userRole === "admin") && !["cancelado", "enviado"].includes(order.status) && (<div className="ml-auto">
         <button
             onClick={(e) => {
-                handleNewStatus(e, order?.id, nextStatus);
+                e.stopPropagation();
+                handleNewStatus(order?.id, nextStatus);
             }}
             className={`text-xs text-white bg-blue-500 px-2 py-1 rounded-full ${buttonClasses}`}
         >

@@ -54,6 +54,10 @@ export const OrderIcon = ({
         aria-hidden={true}
         type="icon"
         iconId={getIconId(order.status)}
-        onClick={isDeletable() ? (e) => onDelete(order._id, e) : null}
+        onClick={isDeletable() ? (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onDelete()
+        } : null}
     />);
 };

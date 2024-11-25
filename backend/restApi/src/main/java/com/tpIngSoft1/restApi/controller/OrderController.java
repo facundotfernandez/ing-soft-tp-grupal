@@ -1,7 +1,5 @@
 package com.tpIngSoft1.restApi.controller;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpIngSoft1.restApi.domain.Order;
 import com.tpIngSoft1.restApi.domain.OrderItem;
@@ -13,20 +11,19 @@ import com.tpIngSoft1.restApi.service.OrderService;
 import com.tpIngSoft1.restApi.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/orders")
@@ -59,11 +56,11 @@ public class OrderController {
         }
 
         List<OrderItem> items = orderDTO.getItems();
-        Order order = new Order(orderDTO.getUsername(),"confirmado", LocalDateTime.now(), items);
+        Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
         orderService.saveOrder(order);
 
-        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success",  "Orden agregada exitosamente",null);
-        return new ResponseEntity<ApiResponse<String>>(response,HttpStatus.OK);
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null);
+        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
     }
 
     @GetMapping
@@ -94,15 +91,14 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> updateOrderStatus(
-            @PathVariable("id") String id,
-            @RequestBody Map<String, String>  status) {
+    public ResponseEntity<ApiResponse<String>> updateOrderStatus(@PathVariable("id") String id, @RequestBody Map<String, String> status) {
 
         if (status.size() != 1 || !status.containsKey("status")) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Body no correcto", null), HttpStatus.CONFLICT);
         }
 
-        if (!status.get("status").equals("EN PROCESO") && !status.get("status").equals("PROCESADO") && !status.get("status").equals("COMPLETADO") && !status.get("status").equals("CANCELADO") ) {
+        Set<String> validStatuses = Set.of("en proceso", "procesado", "enviado", "cancelado");
+        if (!validStatuses.contains(status.get("status"))) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Status no correcto", null), HttpStatus.CONFLICT);
         }
 

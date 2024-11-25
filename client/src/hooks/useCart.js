@@ -6,7 +6,7 @@ const useCart = () => {
     const [cart, setCart] = useState([]);
 
     //Limpiar el carrito cuando se desloggea el usuario
-    const clearCart = () =>{
+    const clearCart = () => {
         setCart([]);
     };
 
@@ -14,21 +14,21 @@ const useCart = () => {
         setCart((prevCart) => {
             // Verificar si ya existe el mismo variant asociado al producto
             const alreadyAdded = prevCart.some(
-                (item) => item.variant.vid === variant.vid && item.prodName === prodName
-            );
+                (item) => item.variant.vid === variant.vid && item.prodName === prodName);
 
             if (alreadyAdded) {
-                return prevCart.map((item) =>
-                    item.variant.vid === variant.vid
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
+                return prevCart.map((item) => item.variant.vid === variant.vid ? {
+                    ...item,
+                    quantity: item.quantity + 1
+                } : item);
             }
             // Si no existe, se agrega una nueva entrada
-            return [
-                ...prevCart,
-                { variant, prodName ,prodId, quantity: 1 }
-            ];
+            return [...prevCart, {
+                variant,
+                prodName,
+                prodId,
+                quantity: 1
+            }];
         });
     };
     // Eliminar del carrito
@@ -54,15 +54,13 @@ const useCart = () => {
             if (response.status === "success") {
                 //cambiar el stock de los productos
                 try {
-                    await Promise.all(
-                        orderData.items.map(async (item) => {
-                            const newStock = item.stock - item.quantity;
-                            if (newStock < 0) {
-                                throw new Error(`Stock insuficiente para el producto ${item.name}`);
-                            }
-                            await patchVariant(item.pid, item.vid, {stock:newStock});
-                        })
-                    );
+                    await Promise.all(orderData.items.map(async (item) => {
+                        const newStock = item.stock - item.quantity;
+                        if (newStock < 0) {
+                            throw new Error(`Stock insuficiente para el producto ${item.name}`);
+                        }
+                        await patchVariant(item.pid, item.vid, newStock);
+                    }));
                     alert("Orden creada exitosamente");
                     alert("Stock actualizado exitosamente");
                     setCart([]); // Vaciar el carrito
@@ -81,31 +79,36 @@ const useCart = () => {
     };
 
 
-
     useEffect(() => {
-            try {
-                const storedCart = localStorage.getItem('cart_data');
-                if (storedCart) {
-                    const parsedCart = JSON.parse(storedCart);
-                    if (Array.isArray(parsedCart)) {
-                        setCart(parsedCart);
-                    }
+        try {
+            const storedCart = localStorage.getItem('cart_data');
+            if (storedCart) {
+                const parsedCart = JSON.parse(storedCart);
+                if (Array.isArray(parsedCart)) {
+                    setCart(parsedCart);
                 }
-            } catch (error) {
-                setCart([]);
             }
-        }, []);
+        } catch (error) {
+            setCart([]);
+        }
+    }, []);
 
     useEffect(() => {
         if (cart.length > 0) {
             localStorage.setItem('cart_data', JSON.stringify(cart));
-        }
-        else{
+        } else {
             localStorage.removeItem('cart_data'); //lo seteo a cero directamente para que no buguee
         }
     }, [cart]);
 
-    return {cart , setCart, clearCart, addToCart, removeFromCart, buyCart };
+    return {
+        cart,
+        setCart,
+        clearCart,
+        addToCart,
+        removeFromCart,
+        buyCart
     };
+};
 
 export default useCart;

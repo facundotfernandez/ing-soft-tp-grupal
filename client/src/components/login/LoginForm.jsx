@@ -27,7 +27,7 @@ export const LoginForm = () => {
     const [username, handleUsernameChange] = useFormField('');
     const [password, handlePasswordChange] = useFormField('');
 
-    const {clearCart} = useCart();
+    const {clearCart} = useContext(CartContext);
 
     useEffect(() => {
         if (!error && user && user?.username !== 'guest') {

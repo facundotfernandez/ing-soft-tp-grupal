@@ -1,7 +1,7 @@
 import {createContext} from 'react';
 import useProducts from "@hooks/useProducts";
 
-const ProductsContext = createContext(undefined, undefined);
+export const ProductsContext = createContext(undefined, undefined);
 
 export const ProductsProvider = ({children}) => {
     const {

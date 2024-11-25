@@ -7,10 +7,12 @@ import {OrderIcon} from "@components/orders/OrderIcon";
 import {OrderCardDetails} from "@components/orders/OrderCardDetails";
 import {showToast} from "@components/notifications/ToastManager";
 import {patchOrder} from "@api/patchRequests";
+import {OrdersContext} from "@context/OrdersProvider";
 
 export const OrderCard = ({
                               order,
-                              onClick
+                              onClick,
+                              cancelOrder
                           }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {user} = useUser();
@@ -28,9 +30,15 @@ export const OrderCard = ({
     };
 
     const handleNewStatus = async (orderId, newStatus) => {
+
+        if (newStatus === "cancelado") {
+            await cancelOrder(order);
+        }
         const response = await patchOrder(orderId, {status: newStatus});
         showToast.success(response?.message);
+
     };
+
 
     return (<>
         <div className="shadow hover:shadow-blue-900 hover:shadow-lg">

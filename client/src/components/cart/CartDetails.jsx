@@ -3,7 +3,7 @@ import Column from "@components/structures/Column";
 import useCart from "@hooks/useCart";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import {ToastManager} from "@components/notifications/ToastManager";
 import {useUser} from "@hooks/useUser";
 import {showToast} from "@components/notifications/ToastManager";
 import {useEffect, useState} from "react";
@@ -12,9 +12,8 @@ import Loader from "@components/notifications/Loader";
 export const CartDetails = ({ }) => {
 
     const [loading, setLoading] = useState(false);
-    const {cart, setCart, clearCart, removeFromCart, buyCart} = useCart();//addToCart //removeFromCart
+    const {cart, setCart, clearCart, removeFromCart, buyCart} = useContext(CartContext);//addToCart //removeFromCart
     const {user} = useUser();
-    //llamar userId desde userContext o algo
 
     useEffect(() => {
         if (!cart || cart.length === 0) {

@@ -1,10 +1,13 @@
 import {useEffect, useState} from 'react';
 import {getOrders} from "@api/readRequests";
+import useProducts from "@hooks/useProducts";
+import {patchVariant} from "@api/patchRequests";
 
 const useOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const {products} = useProducts();
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -21,6 +24,9 @@ const useOrders = () => {
 
         fetchOrders();
     }, []);
+
+
+
 
     return {
         orders,

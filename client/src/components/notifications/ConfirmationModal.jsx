@@ -25,7 +25,7 @@ export function ConfirmationModal({
                     </button>
                 </div>
 
-                <form action="#" method="POST" className="p-4">
+                <div className="p-4">
                     <h4 className="font-semibold text-tremor-content-inverted">
                         Confirmación de Eliminación
                     </h4>
@@ -50,7 +50,7 @@ export function ConfirmationModal({
                             Cancelar
                         </Button>
                     </div>
-                </form>
+                </div>
             </DialogPanel>
         </Dialog>);
 }

@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {create as createApi} from "@api/apiService";
 import {patchVariant} from "@api/patchRequests";
+import {showToast} from "@components/notifications/ToastManager";
 
 const useCart = () => {
     const [cart, setCart] = useState([]);
@@ -38,6 +39,10 @@ const useCart = () => {
     };
 
     const buyCart = async (username) => {
+        if (cart.length == 0){
+            showToast.error("Agrega objetos al carrito antes de continuar");
+            return
+        }
         const orderData = {
             username,
             items: cart.map(item => ({
@@ -61,8 +66,7 @@ const useCart = () => {
                         }
                         await patchVariant(item.pid, item.vid, newStock);
                     }));
-                    alert("Orden creada exitosamente");
-                    alert("Stock actualizado exitosamente");
+                    showToast.error("Orden creada exitosamente");
                     setCart([]); // Vaciar el carrito
                 } catch (error) {
                     showToast.error("Error al actualizar el stock del producto");
@@ -70,10 +74,10 @@ const useCart = () => {
                 }
 
             } else {
-                alert(`Hubo un problema al procesar tu orden: ${response.message}`);
+                showToast.error("Hubo un error creando la orden");
             }
         } catch (error) {
-            alert("Error al procesar tu orden, no hay stock suficiente");
+            showToast.error("Hubo un error creando la orden");
         }
 
     };

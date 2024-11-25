@@ -12,7 +12,7 @@ export const ProductContainer = ({productId}) => {
 
     const [loading, setLoading] = useState(true);
 
-    const {addToCart} = useCart();
+    const {addToCart} = useContext(CartContext);
 
     const id = productId ? unshortenId(productId) : null;
     const product = products.find(prod => prod.id === id);

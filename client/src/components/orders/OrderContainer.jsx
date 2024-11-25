@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 const OrderContainer = ({orderId}) => {
     const {
         orders,
-    } = useOrders();
+    } = useContext(OrdersContext);
     const [loading, setLoading] = useState(true);
 
     const id = orderId ? unshortenId(orderId) : null;

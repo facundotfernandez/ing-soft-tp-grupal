@@ -10,15 +10,15 @@ function App({
                  pageProps
              }) {
     return (<ProductsProvider>
-        <OrdersProvider>
-            <UserProvider>
+        <UserProvider>
+            <OrdersProvider>
                 <CartProvider>
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
                 </CartProvider>
-            </UserProvider>
-        </OrdersProvider>
+            </OrdersProvider>
+        </UserProvider>
     </ProductsProvider>);
 }
 

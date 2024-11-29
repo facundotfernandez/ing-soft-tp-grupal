@@ -54,6 +54,15 @@ public class OrderController {
         // Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
         orderService.saveOrder(order);
 
+        // restamos stock:
+        for (OrderItem item: order.getItems()) {
+            String pid = item.getPid();
+            String vid = item.getVid();
+            if (productService.saveStockProduct(pid,vid,item.getQuantity())==false){
+                new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Variante al modificar stock", null), HttpStatus.CONFLICT);
+            }
+        }
+
         ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null);
         return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
     }
@@ -105,10 +114,11 @@ public class OrderController {
             orderToUp.setStatus(newStatus);
             orderService.saveOrder(orderToUp);
             if (newStatus.equals("cancelado")) {
+                // devolvemos el stock
                 for (OrderItem item: orderToUp.getItems()) {
                     String pid = item.getPid();
                     String vid = item.getVid();
-                    if (productService.saveStockProduct(pid,vid,item.getQuantity())==false){
+                    if (productService.saveStockProduct(pid,vid,-item.getQuantity())==false){
                         new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Variante al modificar stock", null), HttpStatus.CONFLICT);
                     }
                 }

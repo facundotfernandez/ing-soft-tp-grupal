@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Service
 public class OrderService {
@@ -25,7 +26,23 @@ public class OrderService {
         return repository.findById(id);
     }
 
+    public boolean checkRule(Order order) {
+        ObjectMapper mapper = new ObjectMapper();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
+        try {
+            Rule rule = mapper.readValue(inputStream, Rule.class);
+            List<Variant> variant = orderService.convertToOrderItems(order.getItems());
+            return rule.evaluate(variant);
+        } catch (IOException e) {
+            System.err.println(e);
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Falla archivo de reglas", null);
+            return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
+        }
+        return false;
+    }
+
     public void saveOrder(Order order) {
+        order.setConfirmationDate(LocalDateTime.now());
         repository.save(order);
     }
 

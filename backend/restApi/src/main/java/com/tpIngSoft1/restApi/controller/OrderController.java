@@ -45,18 +45,8 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<ApiResponse<String>> createOrder(@Valid @RequestBody Order order) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
-        try {
-            Rule rule = mapper.readValue(inputStream, Rule.class);
-            List<Variant> variant = orderService.convertToOrderItems(order.getItems());
-            if (!rule.evaluate(variant)) {
-                ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
-                return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
-            }
-        } catch (IOException e) {
-            System.err.println(e);
-            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Falla archivo de reglas", null);
+        if(!orderService.checkRule(order)) {
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
             return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
 
@@ -119,7 +109,7 @@ public class OrderController {
                     String pid = item.getPid();
                     String vid = item.getVid();
                     if (productService.saveStockProduct(pid,vid,item.getQuantity())==false){
-                        new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Variante no encontrada", null), HttpStatus.NOT_FOUND);
+                        new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Variante al modificar stock", null), HttpStatus.CONFLICT);
                     }
                 }
             }

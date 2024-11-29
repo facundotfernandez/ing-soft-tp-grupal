@@ -46,10 +46,10 @@ class OrderControllerTest {
 
     @Test
     void testCreateOrder_whenValidOrder() throws Exception {
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setUsername("testUser");
-        orderDTO.setItems(Collections.emptyList());
-        ResponseEntity<ApiResponse<String>> response = orderController.createOrder(orderDTO);
+        Order order = new Order();
+        order.setUsername("testUser");
+        order.setItems(Collections.emptyList());
+        ResponseEntity<ApiResponse<String>> response = orderController.createOrder(order);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody(), "La respuesta no debe ser nula");
         assertNotNull(response.getBody().getMessage(), "El mensaje en la respuesta no debe ser nulo");

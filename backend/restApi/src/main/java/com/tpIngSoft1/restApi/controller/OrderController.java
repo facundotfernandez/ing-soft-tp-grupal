@@ -3,11 +3,13 @@ package com.tpIngSoft1.restApi.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpIngSoft1.restApi.domain.Order;
 import com.tpIngSoft1.restApi.domain.OrderItem;
+import com.tpIngSoft1.restApi.domain.Product;
 import com.tpIngSoft1.restApi.domain.Variant;
 import com.tpIngSoft1.restApi.dto.OrderDTO;
 import com.tpIngSoft1.restApi.rules.rule.Rule;
 import com.tpIngSoft1.restApi.service.JwtService;
 import com.tpIngSoft1.restApi.service.OrderService;
+import com.tpIngSoft1.restApi.service.ProductService;
 import com.tpIngSoft1.restApi.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +37,19 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private JwtService jwtService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<String>> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws IOException {
+    public ResponseEntity<ApiResponse<String>> createOrder(@Valid @RequestBody Order order) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
         try {
             Rule rule = mapper.readValue(inputStream, Rule.class);
-            List<Variant> variant = orderService.convertToOrderItems(orderDTO.getItems());
+            List<Variant> variant = orderService.convertToOrderItems(order.getItems());
             if (!rule.evaluate(variant)) {
                 ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
                 return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
@@ -55,8 +60,8 @@ public class OrderController {
             return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
 
-        List<OrderItem> items = orderDTO.getItems();
-        Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
+        // List<OrderItem> items = orderDTO.getItems();
+        // Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
         orderService.saveOrder(order);
 
         ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null);
@@ -99,6 +104,7 @@ public class OrderController {
 
         String newStatus = status.get("status");
         Set<String> validStatuses = Set.of("en proceso", "procesado", "enviado", "cancelado");
+
         if (!validStatuses.contains(newStatus)) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Status no correcto", null), HttpStatus.CONFLICT);
         }
@@ -108,6 +114,16 @@ public class OrderController {
             Order orderToUp = order.get();
             orderToUp.setStatus(newStatus);
             orderService.saveOrder(orderToUp);
+            if (newStatus.equals("cancelado")) {
+                for (OrderItem item: orderToUp.getItems()) {
+                    String pid = item.getPid();
+                    String vid = item.getVid();
+                    if (productService.saveStockProduct(pid,vid,item.getQuantity())==false){
+                        new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Variante no encontrada", null), HttpStatus.NOT_FOUND);
+                    }
+                }
+            }
+
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Order cambia a estado: " + newStatus, null), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Order no encontrada", null), HttpStatus.NOT_FOUND);

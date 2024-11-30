@@ -57,22 +57,8 @@ export const useCart = () => {
         try {
             const response = await createApi("orders", orderData); //mando la key y la lista
             if (response.status === "success") {
-                //cambiar el stock de los productos
-                try {
-                    await Promise.all(orderData.items.map(async (item) => {
-                        const newStock = item.stock - item.quantity;
-                        if (newStock < 0) {
-                            throw new Error(`Stock insuficiente para el producto ${item.name}`);
-                        }
-                        await patchVariant(item.pid, item.vid, newStock);
-                    }));
-                    showToast.error("Orden creada exitosamente");
-                    setCart([]); // Vaciar el carrito
-                } catch (error) {
-                    showToast.error("Error al actualizar el stock del producto");
-                    console.error(error);
-                }
-
+                showToast.error("Orden creada exitosamente");
+                setCart([]); // Vaciar el carrito
             } else {
                 showToast.error("Hubo un error creando la orden");
             }

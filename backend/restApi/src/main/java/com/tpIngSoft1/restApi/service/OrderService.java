@@ -6,12 +6,16 @@ import com.tpIngSoft1.restApi.domain.Variant;
 import com.tpIngSoft1.restApi.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
+
+import com.tpIngSoft1.restApi.rules.rule.Rule;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
+import java.io.IOException;
 
 @Service
 public class OrderService {
@@ -31,18 +35,23 @@ public class OrderService {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
         try {
             Rule rule = mapper.readValue(inputStream, Rule.class);
-            List<Variant> variant = orderService.convertToOrderItems(order.getItems());
+            List<Variant> variant = this.convertToOrderItems(order.getItems());
             return rule.evaluate(variant);
         } catch (IOException e) {
             System.err.println(e);
-            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Falla archivo de reglas", null);
-            return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
-        return false;
+        return false; 
     }
 
-    public void saveOrder(Order order) {
+    public void saveOrder(Order order, String username) {
         order.setConfirmationDate(LocalDateTime.now());
+        order.setStatus("confirmado");
+        order.setUsername(username);
+        repository.save(order);
+    }
+
+    public void updateOrder(Order order, String status) {
+        order.setStatus(status);
         repository.save(order);
     }
 

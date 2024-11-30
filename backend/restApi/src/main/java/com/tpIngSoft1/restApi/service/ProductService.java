@@ -33,25 +33,4 @@ public class ProductService {
     public void deleteProduct(String id) {
         repository.deleteById(id);
     }
-
-    public boolean saveStockProduct(String pid, String vid, int quantity){
-        Optional<Product>  product = this.findById(pid);
-
-        if (product.isPresent()) {
-            Product productToUpdate = product.get();
-
-            Variant variantToUpdate = productToUpdate.getVariants()
-                .stream()
-                .filter(v -> v.getVid().equals(vid))
-                .findFirst()
-                .orElse(null);
-
-            if (variantToUpdate != null) {
-                variantToUpdate.setStock(variantToUpdate.getStock() - quantity);
-                this.saveProduct(productToUpdate);
-                return true;
-            }
-        }
-        return false;
-    }
 }

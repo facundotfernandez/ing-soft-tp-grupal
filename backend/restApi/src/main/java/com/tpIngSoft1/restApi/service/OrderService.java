@@ -1,26 +1,34 @@
 package com.tpIngSoft1.restApi.service;
 
+import com.tpIngSoft1.restApi.controller.ProductController;
 import com.tpIngSoft1.restApi.domain.Order;
 import com.tpIngSoft1.restApi.domain.OrderItem;
 import com.tpIngSoft1.restApi.domain.Variant;
 import com.tpIngSoft1.restApi.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import java.io.InputStream;
 
-import com.tpIngSoft1.restApi.rules.rule.Rule;
+import com.tpIngSoft1.restApi.utils.ApiResponse;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
-import java.io.IOException;
 
 @Service
 public class OrderService {
     @Autowired
     private OrderRepository repository;
+    
+    @Autowired
+    private ProductController productController;
+
+    private RuleService ruleService = new RuleService();
 
     public List<Order> getAllOrders() {
         return repository.findAll();
@@ -30,17 +38,31 @@ public class OrderService {
         return repository.findById(id);
     }
 
-    public boolean checkRule(Order order) {
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
-        try {
-            Rule rule = mapper.readValue(inputStream, Rule.class);
-            List<Variant> variant = this.convertToOrderItems(order.getItems());
-            return rule.evaluate(variant);
-        } catch (IOException e) {
-            System.err.println(e);
+
+    public ResponseEntity<ApiResponse<String>> createdOrder(Order order, String username) {
+        ResponseEntity<String> response = this.updateVariant(order, false);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return new ResponseEntity<>(new ApiResponse<>(response.getStatusCode().value(), "error", response.getBody() , null), response.getStatusCode());
         }
-        return false; 
+        this.saveOrder(order,username);
+        return new ResponseEntity<ApiResponse<String>>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null), HttpStatus.OK);
+    }
+
+    public boolean checkRule(Order order) {
+        List<Variant> variant = this.convertToOrderItems(order.getItems());
+        return ruleService.checkOrder(variant); 
+    }
+
+    public ResponseEntity<ApiResponse<String>> checkAuth(@RequestHeader("Authorization") String authHeader, JwtService jwtService) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtService.validateToken(token)) {
+            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Token valido", token), HttpStatus.OK);
     }
 
     public void saveOrder(Order order, String username) {
@@ -48,6 +70,20 @@ public class OrderService {
         order.setStatus("confirmado");
         order.setUsername(username);
         repository.save(order);
+    }
+
+    public ResponseEntity<String> updateVariant(Order order, Boolean isAdd) {
+        for (OrderItem item: order.getItems()) {
+            String pid = item.getPid();
+            String vid = item.getVid();
+            Variant variant = productController.getVariantByProductIdAndVid(pid,vid).getBody();
+            Integer stock = isAdd?(variant.getStock()+item.getQuantity()):(variant.getStock()-item.getQuantity());
+            ResponseEntity<String> response =  productController.updateVariantStock(pid,vid,stock );
+            if (response.getStatusCode() != HttpStatus.OK) {
+                return response;
+            }
+        }
+        return new ResponseEntity<>( "Variant actualizados", HttpStatus.OK);
     }
 
     public void updateOrder(Order order, String status) {

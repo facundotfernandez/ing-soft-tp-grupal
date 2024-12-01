@@ -1,11 +1,8 @@
 package com.tpIngSoft1.restApi.controller;
 
-
 import com.tpIngSoft1.restApi.domain.Product;
 import com.tpIngSoft1.restApi.domain.Variant;
-import com.tpIngSoft1.restApi.repository.ProductRepository;
 import com.tpIngSoft1.restApi.service.ProductService;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

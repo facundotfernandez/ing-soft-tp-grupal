@@ -2,7 +2,6 @@ package com.tpIngSoft1.restApi.service;
 
 import com.tpIngSoft1.restApi.repository.ProductRepository;
 import com.tpIngSoft1.restApi.domain.Product;
-import com.tpIngSoft1.restApi.domain.Variant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

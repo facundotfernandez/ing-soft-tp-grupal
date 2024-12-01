@@ -1,15 +1,8 @@
 package com.tpIngSoft1.restApi.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpIngSoft1.restApi.domain.Order;
-import com.tpIngSoft1.restApi.domain.OrderItem;
-import com.tpIngSoft1.restApi.domain.Product;
-import com.tpIngSoft1.restApi.domain.Variant;
-import com.tpIngSoft1.restApi.dto.OrderDTO;
-import com.tpIngSoft1.restApi.rules.rule.Rule;
 import com.tpIngSoft1.restApi.service.JwtService;
 import com.tpIngSoft1.restApi.service.OrderService;
-import com.tpIngSoft1.restApi.service.ProductService;
 import com.tpIngSoft1.restApi.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,23 +28,18 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
-    private ProductController productController;
-
-    @Autowired
     private JwtService jwtService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<String>> createOrder(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody Order order) throws IOException {
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
         }
 
-        String token = authHeader.substring(7);
-        if (!jwtService.validateToken(token)) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
-        }
-
+        String token = response.getBody().getData();
         String username = jwtService.getUsernameFromToken(token);
 
         if(!orderService.checkRule(order)) {
@@ -61,37 +47,19 @@ public class OrderController {
             return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
 
-        // List<OrderItem> items = orderDTO.getItems();
-        // Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
-        // restamos stock:
-        for (OrderItem item: order.getItems()) {
-            String pid = item.getPid();
-            String vid = item.getVid();
-            Variant variant = productController.getVariantByProductIdAndVid(pid,vid).getBody();
-            Integer stock = (variant.getStock()-item.getQuantity());
-            System.out.printf("vid: %s\n", vid);
-            System.out.printf("pid: %s\n", pid);
-            System.out.printf("stock: %d\n", stock);
-            System.out.printf("quantity: %d\n", item.getQuantity());
-            productController.updateVariantStock(pid,vid,stock );
-        }
-
-        orderService.saveOrder(order,username);
-
-        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null);
-        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
+        return orderService.createdOrder(order,username);
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Order>>> getAllOrders(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
-        }
 
-        String token = authHeader.substring(7);
-        if (!jwtService.validateToken(token)) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return new ResponseEntity<>(new ApiResponse<>(response.getStatusCode().value(), "error", response.getBody().getData() , null), response.getStatusCode());
         }
+        
+        String token = response.getBody().getData();
 
         String username = jwtService.getUsernameFromToken(token);
         List<Order> orders;
@@ -112,13 +80,10 @@ public class OrderController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> updateOrderStatus(@RequestHeader("Authorization") String authHeader, @PathVariable("id") String id, @RequestBody Map<String, String> status) {
         
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
-        }
-
-        String token = authHeader.substring(7);
-        if (!jwtService.validateToken(token)) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
         }
 
         if (status.size() != 1 || !status.containsKey("status")) {
@@ -136,21 +101,11 @@ public class OrderController {
         if (order.isPresent()) {
             Order orderToUp = order.get();
             orderService.updateOrder(orderToUp, newStatus);
-            if (newStatus.equals("cancelado")) {
-                // devolvemos el stock
-                for (OrderItem item: orderToUp.getItems()) {
-                    String pid = item.getPid();
-                    String vid = item.getVid();
-                    Variant variant = productController.getVariantByProductIdAndVid(pid,vid).getBody();
-                    Integer stock = (variant.getStock()+item.getQuantity());
-                    System.out.printf("vid: %s\n", vid);
-                    System.out.printf("pid: %s\n", pid);
-                    System.out.printf("stock: %d\n", stock);
-                    System.out.printf("quantity: %d\n", item.getQuantity());
-                    productController.updateVariantStock(pid,vid,stock );
-                }
-            }
  
+            if (newStatus.equals("cancelado")) {
+                orderService.updateVariant(orderToUp,true);
+            }
+
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Order cambia a estado: " + newStatus, null), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Order no encontrada", null), HttpStatus.NOT_FOUND);

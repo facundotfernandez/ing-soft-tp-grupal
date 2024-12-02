@@ -29,11 +29,6 @@ export default function OrdersGrid() {
             const variant = products
                 .flatMap((p) => p.variants)
                 .find((v) => v.vid === item.vid);
-
-            if (variant) {
-                const newStock = variant.stock + item.quantity;
-                await patchVariant(item.pid, item.vid, newStock);
-            }
         }));
     };
 

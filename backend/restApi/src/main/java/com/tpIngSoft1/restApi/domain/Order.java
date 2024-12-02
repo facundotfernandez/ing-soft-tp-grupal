@@ -29,5 +29,7 @@ public class Order {
         this.items = items;
     }
 
+    public List<OrderItem> getItems(){return this.items;};
     public void setStatus(String status) {this.status = status;}
+    public void setConfirmationDate(LocalDateTime confirmationDate) {this.confirmationDate = confirmationDate;}
 }

@@ -1,11 +1,6 @@
 package com.tpIngSoft1.restApi.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpIngSoft1.restApi.domain.Order;
-import com.tpIngSoft1.restApi.domain.OrderItem;
-import com.tpIngSoft1.restApi.domain.Variant;
-import com.tpIngSoft1.restApi.dto.OrderDTO;
-import com.tpIngSoft1.restApi.rules.rule.Rule;
 import com.tpIngSoft1.restApi.service.JwtService;
 import com.tpIngSoft1.restApi.service.OrderService;
 import com.tpIngSoft1.restApi.utils.ApiResponse;
@@ -18,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,41 +31,35 @@ public class OrderController {
     private JwtService jwtService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<String>> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws IOException {
+    public ResponseEntity<ApiResponse<String>> createOrder(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody Order order) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Rules/Rule.json");
-        try {
-            Rule rule = mapper.readValue(inputStream, Rule.class);
-            List<Variant> variant = orderService.convertToOrderItems(orderDTO.getItems());
-            if (!rule.evaluate(variant)) {
-                ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
-                return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
-            }
-        } catch (IOException e) {
-            System.err.println(e);
-            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Falla archivo de reglas", null);
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
+        }
+
+        String token = response.getBody().getData();
+        String username = jwtService.getUsernameFromToken(token);
+
+        if(!orderService.checkRule(order)) {
+            ApiResponse<String> errorResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "No cumple las reglas", null);
             return new ResponseEntity<ApiResponse<String>>(errorResponse, HttpStatus.CONFLICT);
         }
 
-        List<OrderItem> items = orderDTO.getItems();
-        Order order = new Order(orderDTO.getUsername(), "confirmado", LocalDateTime.now(), items);
-        orderService.saveOrder(order);
-
-        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(), "success", "Orden agregada exitosamente", null);
-        return new ResponseEntity<ApiResponse<String>>(response, HttpStatus.OK);
+        return orderService.createdOrder(order,username);
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Order>>> getAllOrders(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
-        }
 
-        String token = authHeader.substring(7);
-        if (!jwtService.validateToken(token)) {
-            return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token inválido", null), HttpStatus.UNAUTHORIZED);
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return new ResponseEntity<>(new ApiResponse<>(response.getStatusCode().value(), "error", response.getBody().getData() , null), response.getStatusCode());
         }
+        
+        String token = response.getBody().getData();
 
         String username = jwtService.getUsernameFromToken(token);
         List<Order> orders;
@@ -91,7 +78,13 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> updateOrderStatus(@PathVariable("id") String id, @RequestBody Map<String, String> status) {
+    public ResponseEntity<ApiResponse<String>> updateOrderStatus(@RequestHeader("Authorization") String authHeader, @PathVariable("id") String id, @RequestBody Map<String, String> status) {
+        
+        ResponseEntity<ApiResponse<String>> response = orderService.checkAuth(authHeader, jwtService);
+        
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
+        }
 
         if (status.size() != 1 || !status.containsKey("status")) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Body no correcto", null), HttpStatus.CONFLICT);
@@ -99,6 +92,7 @@ public class OrderController {
 
         String newStatus = status.get("status");
         Set<String> validStatuses = Set.of("en proceso", "procesado", "enviado", "cancelado");
+
         if (!validStatuses.contains(newStatus)) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CONFLICT.value(), "error", "Status no correcto", null), HttpStatus.CONFLICT);
         }
@@ -106,8 +100,12 @@ public class OrderController {
         Optional<Order> order = orderService.findById(id);
         if (order.isPresent()) {
             Order orderToUp = order.get();
-            orderToUp.setStatus(newStatus);
-            orderService.saveOrder(orderToUp);
+            orderService.updateOrder(orderToUp, newStatus);
+ 
+            if (newStatus.equals("cancelado")) {
+                orderService.updateVariant(orderToUp,true);
+            }
+
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "success", "Order cambia a estado: " + newStatus, null), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "error", "Order no encontrada", null), HttpStatus.NOT_FOUND);

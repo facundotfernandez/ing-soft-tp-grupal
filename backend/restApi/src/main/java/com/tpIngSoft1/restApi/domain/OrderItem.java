@@ -15,4 +15,8 @@ public class OrderItem {
     private String name;
     private String pid;
     private Map<String, String> specs;
+
+    public String getVid(){return this.vid;};
+
+    public String getPid(){return this.pid;};
 }

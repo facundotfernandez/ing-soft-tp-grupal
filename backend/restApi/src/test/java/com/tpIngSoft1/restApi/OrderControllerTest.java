@@ -46,10 +46,12 @@ class OrderControllerTest {
 
     @Test
     void testCreateOrder_whenValidOrder() throws Exception {
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setUsername("testUser");
-        orderDTO.setItems(Collections.emptyList());
-        ResponseEntity<ApiResponse<String>> response = orderController.createOrder(orderDTO);
+        String token = "Bearer adminToken";
+        when(jwtService.getUsernameFromToken("adminToken")).thenReturn("admin");
+        Order order = new Order();
+        order.setUsername("testUser");
+        order.setItems(Collections.emptyList());
+        ResponseEntity<ApiResponse<String>> response = orderController.createOrder(token,order);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody(), "La respuesta no debe ser nula");
         assertNotNull(response.getBody().getMessage(), "El mensaje en la respuesta no debe ser nulo");
@@ -77,27 +79,36 @@ class OrderControllerTest {
 
     @Test
     void testUpdateOrderStatus_whenOrderExists() {
+        String token = "Bearer userToken";
+        when(jwtService.getUsernameFromToken("userToken")).thenReturn("testUser");
+        when(orderService.getOrdersByUsername("testUser")).thenReturn(List.of(order));
         String newStatus = "PROCESADO";
         Map<String, String> statusMap = Map.of("status", "COMPLETADO");
         when(orderService.findById("1")).thenReturn(Optional.of(order));
-        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus("1", statusMap);
+        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus(token,"1", statusMap);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Order cambia a estado: {status=COMPLETADO}", response.getBody().getMessage());
-        verify(orderService, times(1)).saveOrder(order);
+        verify(orderService, times(1)).saveOrder(order,order.getUsername());
     }
 
     @Test
     void testUpdateOrderStatus_whenOrderDoesNotExist() {
+        String token = "Bearer userToken";
+        when(jwtService.getUsernameFromToken("userToken")).thenReturn("testUser");
+        when(orderService.getOrdersByUsername("testUser")).thenReturn(List.of(order));
         Map<String, String> statusMap = Map.of("status", "PROCESADO");
         when(orderService.findById("1")).thenReturn(Optional.empty());
-        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus("1", statusMap);
+        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus(token,"1", statusMap);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Order no encontrada", response.getBody().getMessage());
     }
     @Test
     void testUpdateOrderStatus_whenInvalidStatus() {
+        String token = "Bearer userToken";
+        when(jwtService.getUsernameFromToken("userToken")).thenReturn("testUser");
+        when(orderService.getOrdersByUsername("testUser")).thenReturn(List.of(order));
         Map<String, String> statusMap = Map.of("status", "INVALID_STATUS");
-        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus("1", statusMap);
+        ResponseEntity<ApiResponse<String>> response = orderController.updateOrderStatus(token,"1", statusMap);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals("Status no correcto", response.getBody().getMessage());
     }

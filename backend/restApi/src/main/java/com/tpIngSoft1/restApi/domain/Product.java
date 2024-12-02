@@ -3,7 +3,6 @@ package com.tpIngSoft1.restApi.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
 import java.util.ArrayList;
@@ -38,5 +37,20 @@ public class Product {
 
         public List<Variant> getVariants() { return variants; }
 
+        public int getVariantStock(String vid) {return variants.stream()
+                .filter(variant -> variant.getVid().equals(vid))
+                .findFirst()
+                .map(Variant::getStock)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el Variant con id: " + id));}
+
         public void setVariants(List<Variant> variants) { this.variants = variants; }
+
+        public void updateVariant(Variant variantToUpdate) {
+                for (Variant variant : this.variants) {
+                        if (variant.getVid() == variantToUpdate.getVid()) {
+                                variant.setStock(variantToUpdate.getStock());
+                                break;
+                        }
+                }
+        }
 }

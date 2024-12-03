@@ -53,7 +53,7 @@ public class OrderService {
         return ruleService.checkOrder(variant); 
     }
 
-    public ResponseEntity<ApiResponse<String>> checkAuth(@RequestHeader("Authorization") String authHeader, JwtService jwtService) {
+    public ResponseEntity<ApiResponse<String>> checkAuth(String authHeader, JwtService jwtService) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return new ResponseEntity<>(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "error", "Token no proporcionado", null), HttpStatus.UNAUTHORIZED);
         }

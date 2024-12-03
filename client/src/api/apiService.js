@@ -31,10 +31,14 @@ export const create = async (key, data, basicAuthHeader = null) => {
     }
 };
 
-export const read = async (key, id) => {
+export const read = async (key, id, basicAuthHeader = null) => {
     try {
         const apiUrl = `${getApiUrl()}/${key}${id ? `/${id}` : ''}`;
-        const response = await axios.get(apiUrl, {headers: await getAuthHeaders()});
+        const headers = await getAuthHeaders();
+        if (basicAuthHeader) {
+            headers['Authorization'] = basicAuthHeader;
+        }
+        const response = await axios.get(apiUrl, {headers});
         return response.data;
     } catch (error) {
         if (error.response && error.response.data) {

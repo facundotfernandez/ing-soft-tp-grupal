@@ -27,7 +27,7 @@ public class CartService {
             Cart cart = cartOpt.get();
             for (Cart.CartItem item : cart.getItems()) {
                 // productService.findById para obtener el producto
-                Optional<Product> productOpt = productService.findById(item.getProductId());
+                Optional<Product> productOpt = productService.getProductById(item.getProductId()).getBody();
                 if (productOpt.isPresent()) {
                     products.add(productOpt.get());
                 }

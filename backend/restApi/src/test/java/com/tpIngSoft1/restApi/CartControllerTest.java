@@ -1,5 +1,6 @@
-package com.tpIngSoft1.restApi.controller;
+package com.tpIngSoft1.restApi;
 
+import com.tpIngSoft1.restApi.controller.CartController;
 import com.tpIngSoft1.restApi.domain.Product;
 import com.tpIngSoft1.restApi.service.CartService;
 import com.tpIngSoft1.restApi.service.ProductService;
@@ -21,8 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
-import com.tpIngSoft1.restApi.controller.CartController;
 
 public class CartControllerTest {
 

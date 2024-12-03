@@ -10,6 +10,7 @@ export const useProducts = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
+                
                 const response = await getProducts();
                 setProducts(response);
             } catch (err) {
